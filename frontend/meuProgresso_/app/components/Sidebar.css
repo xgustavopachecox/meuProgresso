@@ -1,0 +1,54 @@
+.sidebar {
+  width: 250px;
+  background-color: #181818; /* Um cinza um pouco mais claro que o fundo */
+  height: 100vh; /* Ocupa 100% da altura da tela */
+  position: fixed; /* Fica fixo na tela */
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #282828;
+}
+
+.sidebar-header {
+  padding: 1.5rem;
+  text-align: center;
+  border-bottom: 1px solid #282828;
+}
+
+.sidebar-logo {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #1DB954; /* Nosso verde de destaque */
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  color: #a7a7a7; /* Cor do texto dos links */
+  text-decoration: none;
+  font-size: 1rem;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.sidebar-nav a:hover {
+  background-color: #282828;
+  color: #ffffff;
+}
+
+/* A mágica do NavLink: ele adiciona a classe 'active' automaticamente */
+.sidebar-nav a.active {
+  background-color: #282828;
+  color: #ffffff;
+  font-weight: bold;
+  border-left: 3px solid #1DB954; /* Destaque verde no link ativo */
+  padding-left: calc(1.5rem - 3px);
+}

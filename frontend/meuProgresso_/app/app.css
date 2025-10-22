@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* NOSSO TEMA ESCURO */
+  background-color: #121212;
+  color: #EAEAEA;
+}
+/* ... seu código existente (body, etc.) ... */
+
+.app-layout {
+  display: flex;
+}
+
+.main-content {
+  flex-grow: 1; /* Faz o conteúdo principal ocupar todo o espaço restante */
+  margin-left: 250px; /* IMPORTANTE: Empurra o conteúdo para fora da área da sidebar */
+  padding: 2rem;
+  width: calc(100% - 250px); /* Garante que o conteúdo não exceda a tela */
+}
