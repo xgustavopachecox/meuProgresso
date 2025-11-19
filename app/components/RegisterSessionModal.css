@@ -1,0 +1,242 @@
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex; justify-content: center;
+  align-items: flex-start; /* Alinha no topo */
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.modal-content {
+  background-color: #282828;
+  padding: 0;
+  border-radius: 8px;
+  position: relative;
+  width: 90%;
+  max-width: 700px;
+  overflow: hidden;
+  margin: 2rem 0;
+}
+
+@media (min-width: 768px) {
+  .modal-content.large {
+    max-width: 700px;
+  }
+}
+
+.close-button {
+  position: absolute; top: 10px; right: 15px;
+  background: none; border: none; color: #aaa;
+  font-size: 2rem; cursor: pointer;
+  transition: color 0.2s;
+}
+.close-button:hover {
+  color: #fff;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background-color: #333;
+  border-bottom: 1px solid #444;
+}
+.modal-header h2 {
+  margin: 0;
+  color: #1DB954;
+}
+
+.modal-body {
+  padding: 1.5rem 2rem;
+}
+
+.modal-footer {
+  padding: 1.5rem 2rem;
+  background-color: #333;
+  border-top: 1px solid #444;
+  text-align: right;
+}
+
+.modal-footer .btn-primary {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #1DB954;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.modal-footer .btn-primary:hover {
+  background-color: #1ed760;
+}
+.modal-footer .btn-primary:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+/* --- Estilos do Formulário --- */
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #eaeaea;
+}
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background-color: #121212;
+  color: #eaeaea;
+  font-size: 1rem;
+}
+
+/* --- Lista de Exercícios para Preencher --- */
+.exercise-log-list {
+  margin-top: 2rem;
+}
+
+.exercise-list-title {
+  font-size: 1.2rem;
+  color: #eaeaea;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #444;
+  padding-bottom: 0.5rem;
+}
+
+.exercise-log-item {
+  margin-bottom: 1.5rem;
+  background-color: #1f1f1f;
+  border-radius: 8px;
+  border: 1px solid #333;
+  overflow: hidden;
+}
+
+.exercise-log-name {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  background-color: #2f2f2f;
+  font-size: 1.1rem;
+}
+
+.exercise-log-goal {
+  font-size: 0.9rem;
+  color: #aaa;
+  font-weight: 500;
+  margin-left: 0.5rem;
+}
+
+.exercise-log-inputs {
+  padding: 1rem;
+}
+
+/* --- Tabela de Inputs --- */
+.input-header,
+.input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 80px; 
+  gap: 1rem;
+  align-items: center;
+  padding: 0.25rem 0;
+}
+
+.input-header {
+  font-size: 0.8rem;
+  color: #888;
+  font-weight: bold;
+  padding: 0 0.5rem 0.5rem 0.5rem;
+  border-bottom: 1px solid #333;
+}
+.input-header span:nth-child(2),
+.input-header span:nth-child(3) {
+  text-align: center;
+}
+.input-header span:nth-child(4) {
+  text-align: right;
+  padding-right: 0.5rem;
+}
+
+.input-row label {
+  font-size: 0.9rem;
+  color: #ccc;
+  padding-left: 0.5rem;
+}
+
+.input-row input {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background-color: #121212;
+  color: #eaeaea;
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* --- Botão de Copiar Série --- */
+.copy-set-container {
+  text-align: right;
+}
+
+.btn-copy-set {
+  background: #333;
+  border: 1px solid #555;
+  color: #ccc;
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-copy-set:hover {
+  background: #444;
+  color: #fff;
+  border-color: #777;
+}
+
+/* --- NOVO BOTÃO DE COPIAR ÚLTIMO TREINO --- */
+.btn-copy-last {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: transparent;
+  border: 1px solid #555;
+  color: #ccc;
+  font-size: 0.9rem;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 1.5rem; /* Espaço entre ele e a lista de exercícios */
+}
+
+.btn-copy-last:hover {
+  background-color: #333;
+  border-color: #1DB954;
+  color: #1DB954;
+}
+
+.btn-copy-last svg {
+  margin-top: -2px; /* Ajuste fino do ícone */
+}
+/* ------------------------------------- */
+
+/* Remove as setinhas de input number */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+input[type=number] {
+  appearance: textfield;
+}

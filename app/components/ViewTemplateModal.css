@@ -1,0 +1,84 @@
+/* O .modal-overlay, .modal-content, .close-button são iguais ao AddTaskModal.css */
+/* Você pode copiar eles de lá se quiser, ou usar estes */
+
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #282828;
+  padding: 0; /* Remove padding para o header customizado */
+  border-radius: 8px;
+  position: relative;
+  width: 90%;
+  max-width: 600px;
+  overflow: hidden; /* Garante que o header arredonde */
+}
+
+.close-button {
+  position: absolute; top: 10px; right: 15px;
+  background: none; border: none; color: #aaa;
+  font-size: 2rem; cursor: pointer;
+  transition: color 0.2s;
+}
+.close-button:hover {
+  color: #fff;
+}
+
+/* --- Estilos Específicos deste Modal --- */
+
+.modal-header {
+  padding: 1.5rem 2rem;
+  background-color: #333; /* Fundo do header */
+  border-bottom: 1px solid #444;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #1DB954; /* Verde */
+}
+
+.modal-header-tag {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #aaa;
+  margin-left: 0.5rem;
+}
+
+.modal-body {
+  padding: 1.5rem 2rem;
+}
+
+.exercise-list-title {
+  font-size: 1.2rem;
+  color: #eaeaea;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.exercise-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.exercise-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid #333;
+}
+
+.exercise-name {
+  font-weight: 500;
+  color: #eaeaea;
+}
+
+.exercise-details {
+  font-size: 0.9rem;
+  color: #aaa;
+}

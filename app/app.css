@@ -1,0 +1,93 @@
+:root {
+  --bg-app: #000000;        /* Fundo preto puro */
+  --bg-card: #121212;       /* Fundo dos cartões */
+  --border-color: #27272a;  /* Cor das bordas */
+  --primary: #1DB954;       /* Verde Spotify/Matrix */
+  --text-main: #ffffff;
+  --text-muted: #a1a1aa;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+}
+
+/* Scrollbar moderna */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-app);
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* --- LAYOUT PRINCIPAL --- */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex-grow: 1;
+  background-color: var(--bg-app);
+  padding: 2rem 3rem; /* Mais espaço nas laterais */
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
+}
+
+/* Ajuste dinâmico da margem baseado na Sidebar */
+.app-layout.sidebar-open .main-content {
+  margin-left: 260px;
+  width: calc(100% - 260px);
+}
+.app-layout.sidebar-closed .main-content {
+  margin-left: 80px;
+  width: calc(100% - 80px);
+}
+
+/* --- ESTILOS GERAIS DE WIDGETS (REUTILIZÁVEIS) --- */
+/* Vamos sobrescrever o estilo antigo de .widget para algo mais moderno */
+
+.widget, .pot-card, .stat-card, .chart-placeholder {
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 16px !important; /* Cantos mais redondos */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Sombra suave */
+}
+
+/* Títulos */
+h1, h2, h3 {
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+/* Inputs mais bonitos */
+input, select {
+  background-color: #18181b !important;
+  border: 1px solid #3f3f46 !important;
+  color: white !important;
+  border-radius: 8px !important;
+  transition: border-color 0.2s;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.2);
+}
+
+/* Botões */
+button {
+  font-weight: 600 !important;
+  letter-spacing: 0.3px;
+}

@@ -1,0 +1,154 @@
+.sidebar {
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: #09090b; /* Preto quase absoluto (Zinc 950) */
+  border-right: 1px solid #27272a; /* Borda sutil */
+  z-index: 50;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar.open { width: 260px; }
+.sidebar.closed { width: 80px; }
+
+/* --- ESTILO DA LOGO --- */
+.sidebar-header {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centraliza se fechado */
+  padding: 0 1.5rem;
+  border-bottom: 1px solid #27272a;
+}
+
+.sidebar.open .sidebar-header {
+  justify-content: flex-start; /* Alinha a esquerda se aberto */
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+}
+
+.logo-icon {
+  background: linear-gradient(135deg, #1DB954 0%, #10b981 100%);
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000; /* Ícone preto no fundo verde */
+  box-shadow: 0 0 15px rgba(29, 185, 84, 0.3); /* Brilho verde */
+  flex-shrink: 0;
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.logo-title {
+  font-size: 0.7rem;
+  color: #aaa;
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+
+.logo-subtitle {
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(to right, #fff, #ccc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* --- NAVEGAÇÃO --- */
+.sidebar-nav {
+  padding: 1.5rem 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar-nav li {
+  padding: 0 1rem;
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+  color: #a1a1aa; /* Cinza claro */
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.sidebar-nav a:hover {
+  color: #fff;
+  background-color: #27272a;
+}
+
+.sidebar-nav a.active {
+  background-color: rgba(29, 185, 84, 0.1); /* Fundo verde bem transparente */
+  color: #1DB954;
+  border: 1px solid rgba(29, 185, 84, 0.2);
+}
+
+/* Centraliza ícones quando fechado */
+.sidebar.closed .sidebar-nav a {
+  justify-content: center;
+  padding: 0.8rem 0;
+}
+
+/* Divisor */
+.divider {
+  height: 1px;
+  background-color: #27272a;
+  margin: 0.5rem 1rem;
+}
+
+/* --- BOTÃO TOGGLE --- */
+.sidebar-toggle {
+  position: absolute;
+  top: 28px;
+  right: -12px;
+  background-color: #18181b;
+  color: #aaa;
+  border: 1px solid #3f3f46;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 60;
+  transition: all 0.2s;
+}
+
+.sidebar-toggle:hover {
+  border-color: #1DB954;
+  color: #1DB954;
+  background-color: #000;
+}

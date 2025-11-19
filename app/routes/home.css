@@ -1,0 +1,241 @@
+.dashboard-page-container {
+  width: 100%;
+}
+
+.dashboard-header {
+  margin-bottom: 2rem;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 2.2rem;
+  color: #1DB954; /* Verde */
+}
+
+.dashboard-header p {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #aaa;
+}
+
+/* --- GRID DE ESTATÍSTICAS --- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background-color: #282828;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #333;
+}
+
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #1DB954; /* Verde */
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  font-size: 1rem;
+  color: #aaa;
+}
+
+/* --- LAYOUT DE COLUNAS --- */
+.dashboard-main-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* Coluna principal 66%, coluna lateral 33% */
+  gap: 1.5rem;
+}
+
+/* Fallback para telas menores (empilhado) */
+@media (max-width: 900px) {
+  .dashboard-main-layout {
+    grid-template-columns: 1fr; /* Uma coluna só */
+  }
+}
+
+.main-column .reports-section {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.btn-report {
+  padding: 0.75rem 1.5rem;
+  border: 1px solid #444;
+  background-color: #282828;
+  color: #eaeaea;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.btn-report:hover {
+  background-color: #333;
+  border-color: #555;
+}
+
+.chart-placeholder {
+  background-color: #282828;
+  border: 1px solid #333;
+  border-radius: 12px;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+}
+
+/* --- WIDGET DE TAREFAS --- */
+.tasks-widget {
+  background-color: #282828;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 1.5rem;
+  height: 100%;
+}
+
+.widget-title {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #eaeaea;
+  border-bottom: 1px solid #444;
+  padding-bottom: 0.75rem;
+}
+
+.tasks-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* --- ITEM DA TAREFA (COM BOTÕES) --- */
+.task-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Joga os botões para a direita */
+  padding: 0.5rem 0.25rem;
+  border-bottom: 1px solid #333;
+}
+.task-item:hover {
+  background-color: #303030;
+}
+
+.task-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  user-select: none;
+  flex-grow: 1; /* Faz esta parte crescer e empurrar os botões */
+  padding: 0.25rem 0;
+}
+
+.task-checkbox {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #555;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: #fff;
+  transition: all 0.2s;
+  flex-shrink: 0; /* Impede o checkbox de encolher */
+}
+
+.task-checkbox.done {
+  background-color: #1DB954;
+  border-color: #1DB954;
+}
+
+.task-description.done {
+  text-decoration: line-through;
+  color: #777;
+}
+
+.no-tasks {
+  color: #777;
+  font-style: italic;
+}
+
+/* --- BOTÕES DE AÇÃO DA TAREFA --- */
+.task-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.task-action-btn {
+  background: transparent;
+  border: none;
+  color: #888; /* Cor sutil */
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.task-action-btn:hover {
+  color: #FFF;
+  background-color: #444;
+}
+
+.task-action-btn.delete:hover {
+  color: #FFF;
+  background-color: #E53E3E; /* Vermelho */
+}
+
+/* --- BOTÃO INTERNO DO WIDGET --- */
+.btn-add-task-widget {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 1rem;
+  background-color: transparent;
+  border: 2px dashed #444;
+  color: #aaa;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.btn-add-task-widget:hover {
+  background-color: #282828;
+  border-color: #1DB954;
+  color: #1DB954;
+}
+
+/* --- BOTÃO FLUTUANTE (FAB) --- */
+.fab {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #1DB954; /* Verde */
+  color: white;
+  border: none;
+  font-size: 2.5rem;
+  line-height: 60px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  transition: background-color 0.2s;
+}
+
+.fab:hover {
+  background-color: #1ed760;
+}
