@@ -1,0 +1,245 @@
+.exercise-card {
+  background-color: #18181b; /* Zinc 900 */
+  border: 1px solid #27272a;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: border-color 0.2s;
+}
+
+.exercise-card:hover {
+  border-color: #3f3f46;
+}
+
+/* --- Header --- */
+.ex-card-header {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background-color: #202023;
+  border-bottom: 1px solid #27272a;
+}
+
+.ex-header-left {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.ex-image-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #000;
+  flex-shrink: 0;
+  border: 1px solid #333;
+}
+
+.ex-image-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ex-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ex-name {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.ex-meta {
+  font-size: 0.85rem;
+  color: #a1a1aa;
+  font-weight: 500;
+}
+
+/* --- Actions --- */
+.ex-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.ex-action-btn {
+  background: transparent;
+  border: none;
+  color: #52525b;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.ex-action-btn.edit:hover { color: #1DB954; background-color: rgba(29, 185, 84, 0.1); }
+.ex-action-btn.delete:hover { color: #ef4444; background-color: rgba(239, 68, 68, 0.1); }
+
+/* --- Notas --- */
+.ex-notes {
+  background-color: rgba(29, 185, 84, 0.05);
+  padding: 0.75rem 1rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  color: #1DB954;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #27272a;
+}
+
+.ex-notes p { margin: 0; line-height: 1.4; }
+.ex-notes svg { flex-shrink: 0; margin-top: 2px; }
+
+/* --- Inputs Area --- */
+.ex-inputs-area {
+  padding: 1rem;
+}
+
+.ex-inputs-header {
+  display: grid;
+  grid-template-columns: 40px 1fr 1fr 40px;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #71717a;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.ex-input-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 1fr 40px;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  align-items: center;
+}
+
+.set-number {
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #52525b;
+  background-color: #27272a;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.ex-input {
+  width: 100%;
+  background-color: #09090b;
+  border: 1px solid #27272a;
+  border-radius: 6px;
+  padding: 0.6rem;
+  text-align: center;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: border-color 0.2s;
+}
+
+.ex-input:focus {
+  border-color: #1DB954;
+  outline: none;
+}
+
+/* Check Visual */
+.set-check {
+  display: flex;
+  justify-content: center;
+  color: #27272a;
+  transition: color 0.3s;
+}
+.set-check.done {
+  color: #1DB954;
+}
+
+/* Responsivo */
+@media (max-width: 480px) {
+  .ex-card-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .ex-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .ex-image-thumb {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+/* Ajuste do Header da Tabela para caber o botão de deletar */
+.ex-inputs-header {
+  /* Adicionamos uma coluna extra de 30px no final */
+  grid-template-columns: 40px 1fr 1fr 40px 30px; 
+}
+
+.ex-input-row {
+  /* Mesma grid */
+  grid-template-columns: 40px 1fr 1fr 40px 30px;
+  position: relative; /* Para posicionamento se precisar */
+}
+
+/* Botão de Deletar Série (Pequeno X) */
+.btn-delete-set {
+  background: transparent;
+  border: none;
+  color: #52525b; /* Cinza escuro */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  opacity: 0; /* Escondido por padrão */
+}
+
+/* Mostra o botão quando passa o mouse na linha */
+.ex-input-row:hover .btn-delete-set {
+  opacity: 1;
+}
+
+.btn-delete-set:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+/* Botão de Adicionar Série (Largo embaixo) */
+.btn-add-set-row {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.6rem;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px dashed #3f3f46;
+  color: #a1a1aa;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+}
+
+.btn-add-set-row:hover {
+  background-color: rgba(29, 185, 84, 0.05);
+  border-color: #1DB954;
+  color: #1DB954;
+}

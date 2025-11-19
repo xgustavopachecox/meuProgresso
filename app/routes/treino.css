@@ -1,4 +1,4 @@
-/* Cabeçalho padrão (igual ao da home) */
+/* --- HEADER GERAL --- */
 .page-header {
   margin-bottom: 2rem;
 }
@@ -13,141 +13,430 @@
   color: #aaa;
 }
 
-/* Layout de 2 colunas (similar ao da home) */
-.treino-layout {
+/* --- GRID DO TOPO (HOME) --- */
+.treino-dashboard-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1.5fr 1fr; /* Esquerda maior */
   gap: 1.5rem;
+  margin-bottom: 3rem;
 }
 
-@media (max-width: 900px) {
-  .treino-layout {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Widget padrão (similar ao .tasks-widget) */
-.widget {
-  background-color: #282828;
+/* Card "Iniciar Treino" */
+.start-workout-card {
+  background: linear-gradient(145deg, #1f1f23, #18181b);
   border: 1px solid #333;
-  border-radius: 12px;
-  padding: 1.5rem;
-  height: 100%;
-  margin-bottom: 1.5rem; /* Espaço entre widgets na mesma coluna */
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 
-.widget-title {
-  margin-top: 0;
+.start-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   margin-bottom: 1.5rem;
-  color: #eaeaea;
-  border-bottom: 1px solid #444;
-  padding-bottom: 0.75rem;
 }
 
-.widget-subtitle {
-  font-size: 0.9rem;
-  color: #777;
-  font-style: italic;
-  margin-top: 1rem;
-}
-
-/* Botão Primário (Verde) */
-.btn-primary {
-  width: 100%;
-  padding: 0.75rem;
-  border: none;
-  border-radius: 8px;
+.icon-bg {
   background-color: #1DB954;
-  color: white;
-  font-size: 1.1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-.btn-primary:hover {
-  background-color: #1ed760;
-}
-
-/* Botão Secundário (Tracejado) */
-.btn-secondary {
-  width: 100%;
-  padding: 0.75rem;
-  margin-top: 1rem;
-  background-color: transparent;
-  border: 2px dashed #444;
-  color: #aaa;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-}
-.btn-secondary:hover {
-  background-color: #282828;
-  border-color: #1DB954;
-  color: #1DB954;
-}
-
-/* Caixa de placeholder (igual ao .chart-placeholder) */
-.placeholder-box {
-  background-color: #1f1f1f;
-  border-radius: 8px;
-  min-height: 200px;
+  color: #000;
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #666;
-  text-align: center;
 }
 
-/* --- ESTILOS DA LISTA DE MODELOS --- */
+.start-header h2 { margin: 0; color: #fff; font-size: 1.5rem; }
+.start-header p { margin: 0; color: #aaa; font-size: 0.9rem; }
 
-.template-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+/* Lista de seleção de template */
+.template-selector-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
 }
 
-/* O novo item da lista */
-.template-item {
+.template-select-btn {
+  background-color: #27272a;
+  border: 1px solid #3f3f46;
+  padding: 1rem;
+  border-radius: 10px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s;
+}
+
+.template-select-btn:hover {
+  border-color: #1DB954;
+  background-color: #2d2d30;
+  transform: translateX(4px);
+}
+
+.template-btn-name {
+  display: block;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+.template-btn-desc {
+  display: block;
+  color: #71717a;
+  font-size: 0.85rem;
+}
+.arrow-icon { color: #1DB954; }
+
+/* Card "Meus Modelos" */
+.templates-card {
+  background-color: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+.card-header-simple {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 0.5rem;
-  border-bottom: 1px solid #333;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #27272a;
+  padding-bottom: 0.5rem;
+}
+.card-header-simple h3 { margin: 0; color: #eaeaea; font-size: 1.2rem; }
+.btn-text {
+  background: none; border: none; color: #1DB954; cursor: pointer; font-weight: 600;
+}
+
+.models-list { list-style: none; padding: 0; margin: 0; }
+.models-list li {
+  padding: 0.8rem 0;
+  border-bottom: 1px solid #27272a;
   color: #ccc;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.dot {
+  width: 8px; height: 8px; background-color: #555; border-radius: 50%;
+}
+
+
+/* --- SEÇÃO DE SEMANAS (BAIXO) --- */
+.weeks-section h3 {
+  color: #fff;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #1DB954;
+  padding-left: 1rem;
+}
+
+.weeks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.week-card {
+  background-color: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: transform 0.2s, border-color 0.2s;
   cursor: pointer;
-  transition: background-color 0.2s;
+}
+.week-card:hover {
+  border-color: #1DB954;
+  transform: translateY(-4px);
+}
+
+.week-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+.week-header svg { color: #1DB954; }
+
+.status-badge {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
   border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #27272a;
+  color: #aaa;
+  margin-bottom: 1rem;
+}
+.status-badge.active {
+  background-color: rgba(29, 185, 84, 0.15);
+  color: #1DB954;
 }
 
-.template-item:hover {
-  background-color: #303030;
+.week-workouts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.mini-tag {
+  background-color: #000;
+  border: 1px solid #333;
+  color: #ccc;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
 }
 
-.template-item-info {
+
+/* --- ESTILOS DA SESSÃO ATIVA (Reciclados) --- */
+.session-header {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.btn-back {
+  background: none;
+  border: 1px solid #333;
+  border-radius: 50%;
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-back:hover { background-color: #333; }
+
+.treino-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding-bottom: 4rem;
+}
+
+.btn-add-exercise {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 2px dashed #3f3f46;
+  border-radius: 12px;
+  padding: 2rem;
+  color: #a1a1aa;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  transition: all 0.2s;
+}
+.btn-add-exercise:hover {
+  border-color: #1DB954;
+  color: #1DB954;
+  background-color: rgba(29, 185, 84, 0.05);
+}
+
+.btn-primary.small {
+  padding: 0.6rem 1.2rem;
+  display: flex; align-items: center; gap: 0.5rem;
+  width: auto; margin: 0;
+}
+
+/* Responsividade */
+@media (max-width: 900px) {
+  .treino-dashboard-grid { grid-template-columns: 1fr; }
+}
+
+/* ... */
+.models-list { list-style: none; padding: 0; margin: 0; }
+
+.models-list li {
+  padding: 0.8rem 0;
+  border-bottom: 1px solid #27272a;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Joga o botão pra direita */
+  gap: 0.5rem;
+}
+
+.model-info {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.template-name {
-  font-weight: 500;
-  color: #eaeaea;
+.dot {
+  width: 8px; height: 8px; background-color: #555; border-radius: 50%;
 }
 
-.template-tag {
-  font-size: 0.8rem;
-  color: #888;
+/* Botão de deletar modelo (novo) */
+.btn-delete-model {
+  background: transparent;
+  border: none;
+  color: #52525b;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  opacity: 0; /* Invisível por padrão */
 }
 
-.template-item-icon {
-  color: #777; /* Cor sutil para a seta */
-  transition: color 0.2s, transform 0.2s;
+/* Mostra o botão quando passa o mouse no item da lista */
+.models-list li:hover .btn-delete-model {
+  opacity: 1;
 }
 
-/* Efeito de hover no item */
-.template-item:hover .template-item-icon {
+.btn-delete-model:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+
+/* ... todo o css anterior ... */
+
+/* --- VISUALIZAÇÃO DETALHADA DA SEMANA --- */
+.week-details-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.empty-state-box {
+  text-align: center;
+  color: #555;
+  padding: 4rem 2rem;
+  border: 2px dashed #333;
+  border-radius: 16px;
+}
+.empty-state-box p { margin-top: 1rem; font-size: 1.1rem; }
+
+/* Lista de Histórico */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.history-card {
+  background-color: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+.history-card.open {
+  border-color: #3f3f46;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Header do Card de Histórico */
+.history-header {
+  padding: 1.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  background-color: #1f1f23;
+}
+.history-header:hover {
+  background-color: #252529;
+}
+
+.history-main-info h3 { margin: 0; color: #fff; font-size: 1.1rem; }
+.history-date { color: #a1a1aa; font-size: 0.9rem; }
+
+.history-stats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #71717a;
+  font-size: 0.9rem;
+}
+.history-stats span {
+  display: flex; align-items: center; gap: 0.4rem;
+}
+
+/* Corpo do Histórico (Exercícios) */
+.history-body {
+  padding: 1rem 1.2rem;
+  border-top: 1px solid #27272a;
+  background-color: #18181b;
+}
+
+.history-exercise-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed #27272a;
+}
+.history-exercise-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+.hist-ex-name {
   color: #1DB954;
-  transform: translateX(3px); /* Pequeno movimento na seta */
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.hist-ex-sets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.hist-set-tag {
+  background-color: #09090b;
+  border: 1px solid #333;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  display: flex;
+  gap: 4px;
+  align-items: baseline;
+}
+
+.hist-kg { color: #fff; font-weight: 700; }
+.hist-x { color: #555; font-size: 0.8rem; }
+.hist-reps { color: #aaa; }
+
+/* Tag pequena na Home */
+.mini-tag.empty {
+  background-color: transparent;
+  border: 1px dashed #444;
+  color: #666;
+}
+
+/* ... estilos anteriores ... */
+
+/* Botão de Editar no Histórico */
+.btn-edit-history {
+  background-color: transparent;
+  border: 1px solid #3f3f46;
+  color: #a1a1aa;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-right: 0.5rem; /* Espaço da setinha */
+}
+
+.btn-edit-history:hover {
+  background-color: #1DB954;
+  border-color: #1DB954;
+  color: #000;
+}
+
+/* Ajuste responsivo para o header do histórico */
+@media (max-width: 600px) {
+  .history-stats {
+    gap: 0.5rem;
+  }
+  .history-stats span {
+    display: none; /* Esconde duração/peso no celular pra caber o botão */
+  }
 }
