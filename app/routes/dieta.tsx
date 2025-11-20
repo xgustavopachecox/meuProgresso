@@ -1,24 +1,32 @@
 import { useState, useMemo, useEffect } from 'react';
 import './dieta.css';
-import AddFoodModal from '../components/AddFoodModal';
-import { LuPlus, LuChevronDown, LuChevronRight, LuChevronLeft } from 'react-icons/lu';
-
-// IMPORTAÇÃO DOS NOVOS WIDGETS
-import WeeklyDietChart from '../components/WeeklyDietChart';
+import AddFoodModal, { type FoodData } from '../components/AddFoodModal';
+import { 
+  LuPlus, LuChevronDown, LuChevronRight, LuChevronLeft, LuCalendar, 
+  LuCheck, LuArrowLeft, LuX, LuTrophy 
+} from 'react-icons/lu';
 import HydrationWidget from '../components/HydrationWidget';
 
-// --- NOSSOS TIPOS DE DADOS ---
-interface FoodData {
-  name: string;
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-}
+// --- TIPOS ---
 interface MealsState {
   [mealName: string]: FoodData[];
 }
-// ------------------------------
+
+// Tipo para o detalhe da semana
+interface DailySummary {
+  day: string;      // Ex: "Segunda"
+  date: string;     // Ex: "12/10"
+  calories: number; // Ex: 3100
+  status: 'success' | 'fail';
+}
+
+interface WeeklyLog {
+  id: number;
+  label: string;
+  status: string;
+  compliance: string;
+  days: DailySummary[]; // Lista dos dias dessa semana
+}
 
 // --- DADOS SIMULADOS ---
 const METAS_DIARIAS = {
@@ -35,72 +43,85 @@ const REFEICOES_PADRAO = [
   { id: 4, name: 'Janta' },
 ];
 
-// Nossos dados para "Hoje" (começa vazio)
-const MOCK_MEALS_STATE_TODAY: MealsState = {
-  "Café da Manhã": [],
-  "Almoço": [],
-  "Lanche da Tarde": [],
-  "Janta": [],
+const MOCK_MEALS_TODAY: MealsState = { "Café da Manhã": [], "Almoço": [], "Lanche da Tarde": [], "Janta": [] };
+const MOCK_MEALS_YESTERDAY: MealsState = {
+  "Café da Manhã": [{ name: "Ovos (3)", calories: 210, protein: 18, carbs: 1, fat: 15 }],
+  "Almoço": [{ name: "Frango (200g)", calories: 330, protein: 62, carbs: 0, fat: 7 }],
+  "Lanche da Tarde": [], "Janta": []
 };
 
-// Nossos dados FALSOS para "Ontem" (só para ver a mudança ao navegar)
-const MOCK_MEALS_STATE_YESTERDAY: MealsState = {
-  "Café da Manhã": [
-    { name: "Ovos Mexidos (3)", calories: 210, protein: 18, carbs: 1, fat: 15 },
-  ],
-  "Almoço": [
-    { name: "Peito de Frango (200g)", calories: 330, protein: 62, carbs: 0, fat: 7 },
-    { name: "Arroz Branco (200g)", calories: 260, protein: 5, carbs: 58, fat: 0 },
-    { name: "Feijão (100g)", calories: 130, protein: 9, carbs: 24, fat: 1 },
-  ],
-  "Lanche da Tarde": [
-    { name: "Whey Protein (1 scoop)", calories: 120, protein: 25, carbs: 3, fat: 1 },
-  ],
-  "Janta": [
-    { name: "Salmão Grelhado (150g)", calories: 310, protein: 30, carbs: 0, fat: 20 },
-  ],
-};
-// --------------------------
+// DADOS DETALHADOS DAS SEMANAS
+const MOCK_WEEKLY_DETAILS: WeeklyLog[] = [
+  { 
+    id: 1, 
+    label: 'Semana Atual', 
+    status: 'Em andamento', 
+    compliance: '2/3 dias na meta',
+    days: [
+      { day: 'Segunda', date: '18/11', calories: 3200, status: 'success' },
+      { day: 'Terça', date: '19/11', calories: 3150, status: 'success' },
+      { day: 'Quarta', date: '20/11', calories: 1200, status: 'fail' }, // Hoje (incompleto)
+    ]
+  },
+  { 
+    id: 2, 
+    label: 'Semana Passada', 
+    status: 'Concluída', 
+    compliance: '6/7 dias na meta',
+    days: [
+      { day: 'Segunda', date: '11/11', calories: 3205, status: 'success' },
+      { day: 'Terça', date: '12/11', calories: 3180, status: 'success' },
+      { day: 'Quarta', date: '13/11', calories: 2900, status: 'fail' },
+      { day: 'Quinta', date: '14/11', calories: 3210, status: 'success' },
+      { day: 'Sexta', date: '15/11', calories: 3300, status: 'success' },
+      { day: 'Sábado', date: '16/11', calories: 3200, status: 'success' },
+      { day: 'Domingo', date: '17/11', calories: 3150, status: 'success' },
+    ]
+  },
+];
 
-// --- FUNÇÃO HELPER ---
 const isDateToday = (date: Date) => {
   const today = new Date();
-  return date.getDate() === today.getDate() &&
-         date.getMonth() === today.getMonth() &&
-         date.getFullYear() === today.getFullYear();
+  return date.toDateString() === today.toDateString();
 };
-// ---------------------
 
 export default function DietaPage() {
-  // --- NOSSOS ESTADOS ---
+  // --- ESTADOS DE NAVEGAÇÃO ---
+  const [viewMode, setViewMode] = useState<'DAILY' | 'WEEK_DETAIL'>('DAILY');
+  const [selectedWeek, setSelectedWeek] = useState<WeeklyLog | null>(null);
+
+  // --- ESTADOS DA DIETA ---
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [meals, setMeals] = useState<MealsState>(MOCK_MEALS_STATE_TODAY);
+  const [meals, setMeals] = useState<MealsState>(MOCK_MEALS_TODAY);
+  const [waterLog, setWaterLog] = useState<Record<string, number>>({});
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentMealName, setCurrentMealName] = useState('');
   const [expandedMeal, setExpandedMeal] = useState<string | null>(null);
 
-  // --- BACKEND FAKE ---
-  useEffect(() => {
-    const todayStr = (new Date()).toDateString();
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toDateString();
+  const dateKey = currentDate.toDateString();
 
-    if (currentDate.toDateString() === todayStr) {
-      setMeals(MOCK_MEALS_STATE_TODAY);
-    } else if (currentDate.toDateString() === yesterdayStr) {
-      setMeals(MOCK_MEALS_STATE_YESTERDAY);
-    } else {
-      setMeals(MOCK_MEALS_STATE_TODAY);
-    }
+  // --- EFEITOS ---
+  useEffect(() => {
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    if (dateKey === today.toDateString()) setMeals(MOCK_MEALS_TODAY);
+    else if (dateKey === yesterday.toDateString()) setMeals(MOCK_MEALS_YESTERDAY);
+    else setMeals(MOCK_MEALS_TODAY);
+
+    setWaterLog(prev => {
+      if (prev[dateKey] !== undefined) return prev;
+      return { ...prev, [dateKey]: dateKey === yesterday.toDateString() ? 2500 : 0 };
+    });
+
     setExpandedMeal(null); 
-  }, [currentDate]);
+  }, [dateKey]);
 
   // --- CÁLCULOS ---
   const totalConsumed = useMemo(() => {
-    let totals: { calorias: number; proteinas: number; carboidratos: number; gorduras: number } = 
-      { calorias: 0, proteinas: 0, carboidratos: 0, gorduras: 0 };
-      
+    let totals = { calorias: 0, proteinas: 0, carboidratos: 0, gorduras: 0 };
     for (const mealName in meals) {
       meals[mealName].forEach(food => {
         totals.calorias += food.calories;
@@ -112,148 +133,196 @@ export default function DietaPage() {
     return totals;
   }, [meals]);
 
-  const getRemaining = (goal: number, consumed: number) => {
-    const remaining = goal - consumed;
-    return remaining < 0 ? 0 : remaining;
-  };
+  const getRemaining = (goal: number, consumed: number) => Math.max(0, goal - consumed);
   const remainingProtein = getRemaining(METAS_DIARIAS.proteinas, totalConsumed.proteinas);
   const remainingCarbs = getRemaining(METAS_DIARIAS.carboidratos, totalConsumed.carboidratos);
   const remainingFat = getRemaining(METAS_DIARIAS.gorduras, totalConsumed.gorduras);
 
-  // --- HANDLERS ---
-  const handleOpenModal = (mealName: string) => {
-    setCurrentMealName(mealName);
-    setIsModalOpen(true);
-  };
-  const handleCloseModal = () => setIsModalOpen(false);
-
-  const handleAddFood = (foodData: FoodData) => {
-    setMeals(prevMeals => ({
-      ...prevMeals,
-      [currentMealName]: [...prevMeals[currentMealName], foodData]
-    }));
-    setExpandedMeal(currentMealName); 
-  };
-  
-  const toggleMealExpansion = (mealName: string) => {
-    if (expandedMeal === mealName) {
-      setExpandedMeal(null);
-    } else {
-      setExpandedMeal(mealName);
+  // --- HANDLERS DE NAVEGAÇÃO ---
+  const openWeekDetails = (weekId: number) => {
+    const week = MOCK_WEEKLY_DETAILS.find(w => w.id === weekId);
+    if (week) {
+      setSelectedWeek(week);
+      setViewMode('WEEK_DETAIL');
     }
   };
 
-  const handlePreviousDay = () => {
+  const goBack = () => {
+    setViewMode('DAILY');
+    setSelectedWeek(null);
+  };
+
+  // --- HANDLERS DE DADOS ---
+  const handleAddWater = (amount: number) => {
+    setWaterLog(prev => ({ ...prev, [dateKey]: Math.max(0, (prev[dateKey] || 0) + amount) }));
+  };
+
+  const handleAddFood = (foodData: FoodData) => {
+    setMeals(prev => ({ ...prev, [currentMealName]: [...prev[currentMealName], foodData] }));
+    setExpandedMeal(currentMealName);
+  };
+
+  const handleOpenModal = (name: string) => { setCurrentMealName(name); setIsModalOpen(true); };
+  const handleCloseModal = () => setIsModalOpen(false);
+  const toggleMealExpansion = (name: string) => setExpandedMeal(expandedMeal === name ? null : name);
+  
+  const changeDate = (days: number) => {
     const newDate = new Date(currentDate);
-    newDate.setDate(newDate.getDate() - 1);
+    newDate.setDate(newDate.getDate() + days);
+    if (days > 0 && isDateToday(currentDate)) return;
     setCurrentDate(newDate);
   };
 
-  const handleNextDay = () => {
-    if (isDateToday(currentDate)) return;
-    const newDate = new Date(currentDate);
-    newDate.setDate(newDate.getDate() + 1);
-    setCurrentDate(newDate);
-  };
+  const formattedDate = currentDate.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' });
 
-  const formattedDate = currentDate.toLocaleDateString('pt-BR', {
-    day: 'numeric',
-    month: 'long',
-  });
+  // =========================================================
+  // RENDERIZAÇÃO DA TELA DE DETALHE DA SEMANA
+  // =========================================================
+  if (viewMode === 'WEEK_DETAIL' && selectedWeek) {
+    return (
+      <div className="page-container">
+        <header className="page-header session-header">
+          <button className="btn-back" onClick={goBack}>
+            <LuArrowLeft size={24} />
+          </button>
+          <div>
+            <h1>{selectedWeek.label}</h1>
+            <p>{selectedWeek.status} • {selectedWeek.compliance}</p>
+          </div>
+        </header>
 
+        <div className="week-detail-content">
+          <div className="widget">
+            <h3 className="widget-title"><LuTrophy size={18}/> Desempenho Diário</h3>
+            <div className="days-list">
+              {selectedWeek.days.map((day, index) => (
+                <div key={index} className="day-row">
+                  <div className="day-info">
+                    <span className="day-name">{day.day}</span>
+                    <span className="day-date">{day.date}</span>
+                  </div>
+                  
+                  <div className="day-stats">
+                    <span className="day-kcal">{day.calories} kcal</span>
+                    <div className={`status-icon ${day.status}`}>
+                      {day.status === 'success' ? <LuCheck size={20}/> : <LuX size={20}/>}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Resumo da Semana (Opcional) */}
+          <div className="widget">
+             <h3 className="widget-title">Média Semanal</h3>
+             <div className="weekly-averages">
+                <div className="avg-item">
+                  <span>Média Calorias</span>
+                  <strong>3.150 kcal</strong>
+                </div>
+                <div className="avg-item">
+                   <span>Meta Batida</span>
+                   <strong>85%</strong>
+                </div>
+             </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // =========================================================
+  // RENDERIZAÇÃO DA TELA DIÁRIA (PADRÃO)
+  // =========================================================
   return (
     <div className="page-container">
-      {/* HEADER DE NAVEGAÇÃO */}
       <header className="page-header date-navigator">
-        <button className="date-nav-btn" onClick={handlePreviousDay}>
-          <LuChevronLeft size={24} />
-        </button>
+        <button className="date-nav-btn" onClick={() => changeDate(-1)}><LuChevronLeft size={24} /></button>
         <h2>{isDateToday(currentDate) ? 'Hoje' : formattedDate}</h2>
-        <button 
-          className="date-nav-btn" 
-          onClick={handleNextDay}
-          disabled={isDateToday(currentDate)}
-        >
+        <button className="date-nav-btn" onClick={() => changeDate(1)} disabled={isDateToday(currentDate)}>
           <LuChevronRight size={24} />
         </button>
       </header>
 
       <div className="dieta-layout">
         
-        {/* --- COLUNA DA ESQUERDA (RESUMO + WIDGETS) --- */}
+        {/* --- COLUNA ESQUERDA --- */}
         <div className="dieta-left-column">
           
-          {/* Widget Resumo */}
           <div className="widget summary-widget">
             <h3 className="widget-title">Resumo do Dia</h3>
-            
             <div className="calorie-circle">
               <span className="consumed-value">{Math.round(totalConsumed.calorias)}</span>
               <span className="goal-divider">/</span>
               <span className="goal-value">{METAS_DIARIAS.calorias} kcal</span>
             </div>
-
             <div className="remaining-macros">
-              <div className="macro-item">
-                <span className="macro-label">Proteínas (faltam)</span>
-                <span className="macro-value protein">{Math.round(remainingProtein)}g</span>
-              </div>
-              <div className="macro-item">
-                <span className="macro-label">Carboidratos (faltam)</span>
-                <span className="macro-value carbs">{Math.round(remainingCarbs)}g</span>
-              </div>
-              <div className="macro-item">
-                <span className="macro-label">Gorduras (faltam)</span>
-                <span className="macro-value fat">{Math.round(remainingFat)}g</span>
-              </div>
+              <div className="macro-item"><span className="macro-label">Proteínas</span><span className="macro-value protein">{Math.round(remainingProtein)}g</span></div>
+              <div className="macro-item"><span className="macro-label">Carboidratos</span><span className="macro-value carbs">{Math.round(remainingCarbs)}g</span></div>
+              <div className="macro-item"><span className="macro-label">Gorduras</span><span className="macro-value fat">{Math.round(remainingFat)}g</span></div>
             </div>
           </div>
 
-          {/* Widget de Água (NOVO) */}
-          <HydrationWidget />
-
-          {/* Gráfico Semanal (NOVO) */}
-          <WeeklyDietChart dailyGoal={METAS_DIARIAS.calorias} />
+          {/* HISTÓRICO SEMANAL (Clicável agora) */}
+          <div className="widget diet-history-widget">
+            <h3 className="widget-title">Histórico Semanal</h3>
+            <div className="weeks-list-diet">
+              {MOCK_WEEKLY_DETAILS.map(week => (
+                <div key={week.id} className="week-card-diet" onClick={() => openWeekDetails(week.id)}>
+                  <div className="week-header-diet">
+                    <LuCalendar size={18} />
+                    <span>{week.label}</span>
+                  </div>
+                  <div className="week-body-diet">
+                    <span className={`status-badge ${week.status === 'Em andamento' ? 'active' : ''}`}>
+                      {week.status}
+                    </span>
+                    <div className="compliance-tag">
+                      <LuCheck size={14} /> {week.compliance}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
         </div>
 
-        {/* --- COLUNA DA DIREITA (REFEIÇÕES) --- */}
+        {/* --- COLUNA DIREITA --- */}
         <div className="dieta-right-column">
+          
+
           <div className="widget">
-            <h3 className="widget-title">Refeições do Dia</h3>
+            <h3 className="widget-title">Refeições</h3>
             <div className="meals-list">
               {REFEICOES_PADRAO.map(meal => {
                 const isExpanded = expandedMeal === meal.name;
-                const foodsInThisMeal = meals[meal.name] || [];
+                const foods = meals[meal.name] || [];
+                const mealCals = foods.reduce((acc, f) => acc + f.calories, 0);
 
                 return (
                   <div key={meal.id} className="meal-accordion">
                     <div className="meal-item-header" onClick={() => toggleMealExpansion(meal.name)}>
                       <div className="meal-header-left">
                         {isExpanded ? <LuChevronDown size={20} /> : <LuChevronRight size={20} />}
-                        <span className="meal-name">{meal.name}</span>
+                        <div className="meal-info-header">
+                          <span className="meal-name">{meal.name}</span>
+                          <span className="meal-cal-total">{Math.round(mealCals)} kcal</span>
+                        </div>
                       </div>
-                      <button 
-                        className="btn-add-food" 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleOpenModal(meal.name);
-                        }}
-                      >
-                        <LuPlus size={16} /> Adicionar
+                      <button className="btn-add-food" onClick={(e) => { e.stopPropagation(); handleOpenModal(meal.name); }}>
+                        <LuPlus size={16} />
                       </button>
                     </div>
-
                     {isExpanded && (
                       <div className="meal-content-body">
-                        {foodsInThisMeal.length === 0 ? (
-                          <p className="no-food-item">Nenhum alimento registrado.</p>
-                        ) : (
+                        {foods.length === 0 ? <p className="no-food-item">Vazio</p> : (
                           <ul className="food-list">
-                            {foodsInThisMeal.map((food, index) => (
-                              <li key={index} className="food-item">
-                                <span className="food-item-name">{food.name}</span>
-                                <span className="food-item-calories">{Math.round(food.calories)} kcal</span>
+                            {foods.map((f, i) => (
+                              <li key={i} className="food-item">
+                                <span className="food-item-name">{f.name}</span>
+                                <span className="food-item-calories">{Math.round(f.calories)}</span>
                               </li>
                             ))}
                           </ul>
@@ -264,18 +333,13 @@ export default function DietaPage() {
                 );
               })}
             </div>
-            <button className="btn-secondary">+ Nova Refeição</button>
           </div>
+
+          <HydrationWidget currentAmount={waterLog[dateKey] || 0} onAdd={handleAddWater} />
         </div>
       </div>
 
-      {/* O MODAL */}
-      <AddFoodModal 
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onSubmit={handleAddFood}
-        mealName={currentMealName}
-      />
+      <AddFoodModal isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleAddFood} mealName={currentMealName} />
     </div>
   );
 }

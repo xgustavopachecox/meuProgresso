@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import './AddFoodModal.css'; // Vamos usar este CSS
+import React, { useState } from 'react';
+import './AddFoodModal.css';
 import { LuSearch, LuLoader, LuCalculator } from 'react-icons/lu';
 
 // --- Tipos de Dados ---
-// O que a API do Open Food Facts nos retorna (simplificado)
 interface ApiFoodProduct {
   product_name: string;
   nutriments: {
@@ -14,8 +13,8 @@ interface ApiFoodProduct {
   };
 }
 
-// O que o nosso modal vai enviar para a página (o mesmo de antes)
-interface FoodData {
+// ADICIONE 'export' AQUI NESTA LINHA:
+export interface FoodData {
   name: string;
   calories: number;
   protein: number;

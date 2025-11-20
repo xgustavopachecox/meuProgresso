@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
-import { LuGlassWater, LuPlus, LuMinus } from 'react-icons/lu';
-import './HydrationWidget.css'; // Vamos criar
+import React from 'react';
+import { LuGlassWater, LuMinus } from 'react-icons/lu';
+import './HydrationWidget.css';
 
-export default function HydrationWidget() {
-  const [waterMl, setWaterMl] = useState(1250); // Começa com um pouco bebido
-  const GOAL = 3000; // Meta 3 litros
+// Agora ele recebe dados via props
+interface Props {
+  currentAmount: number;
+  onAdd: (amount: number) => void;
+}
 
-  const percentage = Math.min((waterMl / GOAL) * 100, 100);
+const GOAL = 3000; // Meta fixa de 3L
 
-  const addWater = (amount: number) => {
-    setWaterMl(prev => Math.max(0, prev + amount));
-  };
+export default function HydrationWidget({ currentAmount, onAdd }: Props) {
+  const percentage = Math.min((currentAmount / GOAL) * 100, 100);
 
   return (
     <div className="hydration-widget">
@@ -19,18 +20,17 @@ export default function HydrationWidget() {
           <LuGlassWater size={20} className="water-icon" />
           <h3>Hidratação</h3>
         </div>
-        <span className="hydration-value">{waterMl}ml <span className="goal">/ {GOAL}ml</span></span>
+        <span className="hydration-value">{currentAmount}ml <span className="goal">/ {GOAL}ml</span></span>
       </div>
 
-      {/* Barra de Progresso Azul */}
       <div className="water-bar-container">
         <div className="water-bar" style={{ width: `${percentage}%` }}></div>
       </div>
 
       <div className="hydration-actions">
-        <button className="btn-water remove" onClick={() => addWater(-250)}><LuMinus size={16}/></button>
-        <button className="btn-water add" onClick={() => addWater(250)}>+ 250ml</button>
-        <button className="btn-water add" onClick={() => addWater(500)}>+ 500ml</button>
+        <button className="btn-water remove" onClick={() => onAdd(-250)}><LuMinus size={16}/></button>
+        <button className="btn-water add" onClick={() => onAdd(250)}>+ 250ml</button>
+        <button className="btn-water add" onClick={() => onAdd(500)}>+ 500ml</button>
       </div>
     </div>
   );

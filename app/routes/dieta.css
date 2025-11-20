@@ -255,3 +255,159 @@
   text-align: center;
   padding: 1rem 0;
 }
+
+/* ... (estilos anteriores mantidos) ... */
+
+/* --- Histórico Semanal (Estilo Card) --- */
+.weeks-list-diet {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.week-card-diet {
+  background-color: #1f1f1f; /* Ligeiramente diferente do fundo do widget */
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.week-card-diet:hover {
+  border-color: #1DB954;
+}
+
+.week-header-diet {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #eaeaea;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+}
+.week-header-diet svg { color: #1DB954; }
+
+.week-body-diet {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status-badge {
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #27272a;
+  color: #aaa;
+}
+.status-badge.active {
+  background-color: rgba(29, 185, 84, 0.15);
+  color: #1DB954;
+}
+
+.compliance-tag {
+  font-size: 0.8rem;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.compliance-tag svg { color: #1DB954; }
+
+
+/* --- Ajuste no Header da Refeição (Direita) --- */
+.meal-info-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.meal-cal-total {
+  font-size: 0.8rem;
+  color: #777;
+  font-weight: normal;
+}
+
+/* ... estilos anteriores ... */
+
+/* --- TELA DE DETALHES DA SEMANA --- */
+
+.week-detail-content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.days-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.day-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #333;
+}
+.day-row:last-child { border-bottom: none; }
+
+.day-info {
+  display: flex;
+  flex-direction: column;
+}
+.day-name {
+  color: #fff;
+  font-weight: 600;
+}
+.day-date {
+  color: #777;
+  font-size: 0.85rem;
+}
+
+.day-stats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.day-kcal {
+  color: #aaa;
+  font-weight: 500;
+}
+
+/* Ícones de Status */
+.status-icon.success { color: #1DB954; }
+.status-icon.fail { color: #ef4444; }
+
+/* Médias */
+.weekly-averages {
+  display: flex;
+  justify-content: space-around;
+}
+.avg-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.avg-item span { color: #aaa; font-size: 0.9rem; }
+.avg-item strong { color: #fff; font-size: 1.2rem; }
+
+/* Reutilizar botão de voltar do treino.css se necessário */
+.btn-back {
+  background: none;
+  border: 1px solid #333;
+  border-radius: 50%;
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; cursor: pointer;
+  transition: background 0.2s;
+  margin-right: 1rem;
+}
+.btn-back:hover { background-color: #333; }
+
+.session-header {
+  display: flex;
+  align-items: center;
+  /* gap já é dado pelo botão */
+}
