@@ -1,0 +1,123 @@
+/* --- Header e Layout --- */
+.page-header { margin-bottom: 2rem; }
+.page-header h1 { margin: 0; font-size: 2.2rem; color: #1DB954; }
+.page-header p { margin: 0; font-size: 1.1rem; color: #a1a1aa; }
+
+.finance-month {
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  margin: 0.5rem 0 !important;
+}
+
+/* --- Resumo de Saldo --- */
+.finance-summary { margin-bottom: 2rem; }
+.income-card {
+  background-color: #18181b;
+  border: 1px solid #3f3f46;
+  border-radius: 16px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+.income-label {
+  color: #a1a1aa; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;
+}
+.income-value { font-size: 3rem; font-weight: 800; color: #fff; }
+.income-value.negative { color: #ef4444; }
+
+/* --- Grid dos Potes --- */
+.pots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* --- Card do Pote --- */
+.pot-card {
+  background-color: #18181b;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #27272a;
+  display: flex; flex-direction: column;
+}
+
+/* Cabeçalho do Pote com Cores */
+.pot-header { padding: 1.5rem; color: #fff; }
+
+/* Metas: Roxo/Azul */
+.pot-metas .pot-header { background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%); }
+.pot-metas { border-color: #1e3a8a; }
+
+/* Essenciais: Laranja/Vermelho */
+.pot-essenciais .pot-header { background: linear-gradient(135deg, #f97316 0%, #c2410c 100%); }
+.pot-essenciais { border-color: #c2410c; }
+
+/* Pessoal: Verde */
+.pot-pessoal .pot-header { background: linear-gradient(135deg, #10b981 0%, #047857 100%); }
+.pot-pessoal { border-color: #047857; }
+
+.pot-title-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+.pot-title-row h3 { margin: 0; font-size: 1.1rem; font-weight: 600; }
+
+.pot-total { font-size: 2rem; font-weight: bold; margin-bottom: 0.5rem; }
+.pot-description { margin: 0; font-size: 0.9rem; opacity: 0.8; }
+
+/* --- Lista de Itens --- */
+.pot-items-list { padding: 1rem; background-color: #18181b; flex-grow: 1; }
+
+.pot-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 0; border-bottom: 1px solid #27272a;
+}
+.pot-item:last-child { border-bottom: none; }
+
+.item-icon-wrapper {
+  background-color: #27272a; width: 40px; height: 40px;
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  color: #a1a1aa; margin-right: 1rem;
+}
+
+.item-info { flex-grow: 1; }
+.item-name { display: block; font-weight: 500; color: #eaeaea; }
+.item-desc { display: block; font-size: 0.8rem; color: #777; }
+
+.item-value { font-weight: bold; color: #fff; font-size: 1.1rem; }
+
+/* --- Botões de Ação --- */
+.finance-actions-container {
+  display: flex; gap: 1rem; margin-top: 2rem; padding-bottom: 2rem;
+}
+
+.btn-action {
+  flex: 1; padding: 1.2rem; border: none; border-radius: 12px;
+  color: #000; font-size: 1.1rem; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  gap: 0.5rem; transition: transform 0.2s, filter 0.2s;
+}
+
+.btn-action:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+.btn-entry { background-color: #1DB954; }
+.btn-exit { background-color: #ef4444; color: #fff; }
+
+@media (max-width: 600px) {
+  .pots-grid { grid-template-columns: 1fr; }
+}
+
+/* ... (cores existentes: pot-metas, pot-essenciais, pot-pessoal) ... */
+
+/* Variáveis: Roxo/Rosa (Cyberpunk Style) */
+.pot-variaveis .pot-header { 
+  background: linear-gradient(135deg, #9333ea 0%, #7e22ce 100%); 
+}
+.pot-variaveis { 
+  border-color: #7e22ce; 
+}
+
+/* ... (resto do arquivo continua igual) ... */

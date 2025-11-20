@@ -1,0 +1,73 @@
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #18181b;
+  padding: 0;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  overflow: hidden;
+  border: 1px solid #27272a;
+}
+
+/* HEADER */
+.modal-header {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #27272a;
+}
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #fff;
+}
+
+/* Cores do Header */
+.header-entry { background-color: rgba(29, 185, 84, 0.15); border-bottom-color: #1DB954; }
+.header-exit { background-color: rgba(239, 68, 68, 0.15); border-bottom-color: #ef4444; }
+
+.close-button {
+  background: none; border: none; color: #aaa;
+  font-size: 2rem; cursor: pointer;
+}
+.close-button:hover { color: #fff; }
+
+/* FORMULÁRIO */
+.transaction-form { padding: 2rem; }
+
+.form-group { margin-bottom: 1.5rem; }
+.form-group label {
+  display: block; margin-bottom: 0.5rem; color: #a1a1aa; font-weight: 500;
+}
+
+.modal-select, .modal-input-money {
+  width: 100%; padding: 0.9rem; border-radius: 8px;
+  border: 1px solid #3f3f46; background-color: #121212;
+  color: #fff; font-size: 1rem;
+}
+
+.modal-input-money {
+  font-size: 1.8rem; font-weight: bold; text-align: center;
+}
+
+/* Cores do Texto do Input */
+.text-entry { color: #1DB954; border-color: #1DB954; }
+.text-exit { color: #ef4444; border-color: #ef4444; }
+
+/* BOTÕES */
+.btn-confirm {
+  width: 100%; padding: 1rem; border: none; border-radius: 8px;
+  color: white; font-size: 1.1rem; font-weight: bold;
+  cursor: pointer; transition: filter 0.2s; margin-top: 1rem;
+}
+.btn-confirm:hover { filter: brightness(1.1); }
+
+.btn-entry { background-color: #1DB954; color: #000; }
+.btn-exit { background-color: #ef4444; color: #fff; }

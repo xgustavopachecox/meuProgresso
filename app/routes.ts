@@ -5,6 +5,7 @@ export default [
   route("treino", "routes/treino.tsx"),
   
   // ADICIONE ESTA NOVA LINHA
-  route("dieta", "routes/dieta.tsx")
+  route("dieta", "routes/dieta.tsx"),
+  route("financeiro", "routes/financeiro.tsx")
 
 ] satisfies RouteConfig;
