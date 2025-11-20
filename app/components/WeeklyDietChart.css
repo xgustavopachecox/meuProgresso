@@ -1,0 +1,84 @@
+.weekly-chart-container {
+  background-color: #18181b; /* Fundo do card */
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid #27272a;
+  margin-top: 1.5rem; /* Espaço do widget de cima */
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.chart-header h4 {
+  margin: 0;
+  color: #eaeaea;
+  font-weight: 600;
+}
+
+.chart-header span {
+  color: #71717a;
+  font-size: 0.8rem;
+}
+
+.chart-bars-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 120px; /* Altura do gráfico */
+  position: relative;
+  padding-top: 10px;
+}
+
+/* Linha da Meta */
+.goal-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #3f3f46;
+  border-top: 1px dashed #71717a;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+.chart-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  height: 100%;
+  justify-content: flex-end;
+  z-index: 1;
+}
+
+.bar-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.chart-bar {
+  width: 8px;
+  background-color: #1DB954; /* Verde Padrão */
+  border-radius: 4px;
+  transition: height 0.5s ease;
+  min-height: 4px; /* Sempre mostra um toquinho */
+}
+
+.chart-bar.over {
+  background-color: #ef4444; /* Vermelho se estourar */
+}
+
+.day-label {
+  color: #71717a;
+  font-size: 0.75rem;
+  font-weight: 500;
+}

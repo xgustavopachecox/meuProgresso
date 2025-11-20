@@ -3,6 +3,10 @@ import './dieta.css';
 import AddFoodModal from '../components/AddFoodModal';
 import { LuPlus, LuChevronDown, LuChevronRight, LuChevronLeft } from 'react-icons/lu';
 
+// IMPORTAÇÃO DOS NOVOS WIDGETS
+import WeeklyDietChart from '../components/WeeklyDietChart';
+import HydrationWidget from '../components/HydrationWidget';
+
 // --- NOSSOS TIPOS DE DADOS ---
 interface FoodData {
   name: string;
@@ -39,7 +43,7 @@ const MOCK_MEALS_STATE_TODAY: MealsState = {
   "Janta": [],
 };
 
-// Nossos dados FALSOS para "Ontem" (só para ver a mudança)
+// Nossos dados FALSOS para "Ontem" (só para ver a mudança ao navegar)
 const MOCK_MEALS_STATE_YESTERDAY: MealsState = {
   "Café da Manhã": [
     { name: "Ovos Mexidos (3)", calories: 210, protein: 18, carbs: 1, fat: 15 },
@@ -59,7 +63,6 @@ const MOCK_MEALS_STATE_YESTERDAY: MealsState = {
 // --------------------------
 
 // --- FUNÇÃO HELPER ---
-// Checa se a data fornecida é o dia de hoje
 const isDateToday = (date: Date) => {
   const today = new Date();
   return date.getDate() === today.getDate() &&
@@ -70,19 +73,14 @@ const isDateToday = (date: Date) => {
 
 export default function DietaPage() {
   // --- NOSSOS ESTADOS ---
-  const [currentDate, setCurrentDate] = useState(new Date()); // 1. O NOVO ESTADO DA DATA
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [meals, setMeals] = useState<MealsState>(MOCK_MEALS_STATE_TODAY);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentMealName, setCurrentMealName] = useState('');
   const [expandedMeal, setExpandedMeal] = useState<string | null>(null);
 
-  // 2. O "BACKEND FAKE"
-  // Este useEffect "escuta" a 'currentDate'. Quando ela muda,
-  // ele finge que foi ao backend e carregou os dados do novo dia.
+  // --- BACKEND FAKE ---
   useEffect(() => {
-    // Vamos simular: se for hoje, carrega o vazio. Se for ontem, carrega o cheio.
-    // Qualquer outro dia, carrega vazio também.
-    
     const todayStr = (new Date()).toDateString();
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
@@ -93,13 +91,12 @@ export default function DietaPage() {
     } else if (currentDate.toDateString() === yesterdayStr) {
       setMeals(MOCK_MEALS_STATE_YESTERDAY);
     } else {
-      // Para qualquer outro dia (futuro ou passado distante), carrega vazio
       setMeals(MOCK_MEALS_STATE_TODAY);
     }
-    setExpandedMeal(null); // Fecha todos acordeões ao mudar o dia
-  }, [currentDate]); // A dependência: rode esta função sempre que 'currentDate' mudar
+    setExpandedMeal(null); 
+  }, [currentDate]);
 
-  // 3. O 'useMemo' recalcula o total automaticamente
+  // --- CÁLCULOS ---
   const totalConsumed = useMemo(() => {
     let totals: { calorias: number; proteinas: number; carboidratos: number; gorduras: number } = 
       { calorias: 0, proteinas: 0, carboidratos: 0, gorduras: 0 };
@@ -113,9 +110,8 @@ export default function DietaPage() {
       });
     }
     return totals;
-  }, [meals]); // A dependência: recalcule quando 'meals' (os dados carregados) mudar
+  }, [meals]);
 
-  // --- FUNÇÕES DE CONTROLE ---
   const getRemaining = (goal: number, consumed: number) => {
     const remaining = goal - consumed;
     return remaining < 0 ? 0 : remaining;
@@ -124,14 +120,13 @@ export default function DietaPage() {
   const remainingCarbs = getRemaining(METAS_DIARIAS.carboidratos, totalConsumed.carboidratos);
   const remainingFat = getRemaining(METAS_DIARIAS.gorduras, totalConsumed.gorduras);
 
-  // Funções dos modais (sem mudança)
+  // --- HANDLERS ---
   const handleOpenModal = (mealName: string) => {
     setCurrentMealName(mealName);
     setIsModalOpen(true);
   };
   const handleCloseModal = () => setIsModalOpen(false);
 
-  // Função de adicionar comida (sem mudança)
   const handleAddFood = (foodData: FoodData) => {
     setMeals(prevMeals => ({
       ...prevMeals,
@@ -140,7 +135,6 @@ export default function DietaPage() {
     setExpandedMeal(currentMealName); 
   };
   
-  // Função do acordeão (sem mudança)
   const toggleMealExpansion = (mealName: string) => {
     if (expandedMeal === mealName) {
       setExpandedMeal(null);
@@ -149,7 +143,6 @@ export default function DietaPage() {
     }
   };
 
-  // 4. NOVAS FUNÇÕES DE NAVEGAÇÃO DE DATA
   const handlePreviousDay = () => {
     const newDate = new Date(currentDate);
     newDate.setDate(newDate.getDate() - 1);
@@ -157,22 +150,20 @@ export default function DietaPage() {
   };
 
   const handleNextDay = () => {
-    if (isDateToday(currentDate)) return; // Impede avançar para o futuro
+    if (isDateToday(currentDate)) return;
     const newDate = new Date(currentDate);
     newDate.setDate(newDate.getDate() + 1);
     setCurrentDate(newDate);
   };
 
-  // 5. Formata a data para o header
   const formattedDate = currentDate.toLocaleDateString('pt-BR', {
     day: 'numeric',
     month: 'long',
-    // year: 'numeric' // Vamos omitir o ano por enquanto, fica mais limpo
   });
 
   return (
     <div className="page-container">
-      {/* 6. O NOVO HEADER DA PÁGINA */}
+      {/* HEADER DE NAVEGAÇÃO */}
       <header className="page-header date-navigator">
         <button className="date-nav-btn" onClick={handlePreviousDay}>
           <LuChevronLeft size={24} />
@@ -181,17 +172,18 @@ export default function DietaPage() {
         <button 
           className="date-nav-btn" 
           onClick={handleNextDay}
-          disabled={isDateToday(currentDate)} // Desabilita se for "hoje"
+          disabled={isDateToday(currentDate)}
         >
           <LuChevronRight size={24} />
         </button>
       </header>
 
-      {/* O RESTO DA PÁGINA (sem mudanças) */}
       <div className="dieta-layout">
         
-        {/* Coluna da Esquerda (Metas) */}
+        {/* --- COLUNA DA ESQUERDA (RESUMO + WIDGETS) --- */}
         <div className="dieta-left-column">
+          
+          {/* Widget Resumo */}
           <div className="widget summary-widget">
             <h3 className="widget-title">Resumo do Dia</h3>
             
@@ -216,9 +208,16 @@ export default function DietaPage() {
               </div>
             </div>
           </div>
+
+          {/* Widget de Água (NOVO) */}
+          <HydrationWidget />
+
+          {/* Gráfico Semanal (NOVO) */}
+          <WeeklyDietChart dailyGoal={METAS_DIARIAS.calorias} />
+
         </div>
 
-        {/* Coluna da Direita (Refeições) */}
+        {/* --- COLUNA DA DIREITA (REFEIÇÕES) --- */}
         <div className="dieta-right-column">
           <div className="widget">
             <h3 className="widget-title">Refeições do Dia</h3>
