@@ -179,6 +179,12 @@ export default function DietaPage() {
   // RENDERIZAÇÃO DA TELA DE DETALHE DA SEMANA
   // =========================================================
   if (viewMode === 'WEEK_DETAIL' && selectedWeek) {
+    
+    // CÁLCULO DOS TOTAIS DA SEMANA (Média e Soma Total)
+    const totalWeekCalories = selectedWeek.days.reduce((acc, day) => acc + day.calories, 0);
+    const totalWeekGoal = METAS_DIARIAS.calorias * selectedWeek.days.length;
+    const weeklyAverage = Math.round(totalWeekCalories / selectedWeek.days.length);
+
     return (
       <div className="page-container">
         <header className="page-header session-header">
@@ -213,17 +219,17 @@ export default function DietaPage() {
             </div>
           </div>
 
-          {/* Resumo da Semana (Opcional) */}
+          {/* Resumo da Semana (MODIFICADO PARA TOTAL DE CALORIAS) */}
           <div className="widget">
              <h3 className="widget-title">Média Semanal</h3>
              <div className="weekly-averages">
                 <div className="avg-item">
-                  <span>Média Calorias</span>
-                  <strong>3.150 kcal</strong>
+                  <span>Média Diária</span>
+                  <strong>{weeklyAverage} kcal</strong>
                 </div>
                 <div className="avg-item">
-                   <span>Meta Batida</span>
-                   <strong>85%</strong>
+                   <span>Total Calorias</span>
+                   <strong style={{ fontSize: '1rem' }}>{totalWeekCalories} / {totalWeekGoal}</strong>
                 </div>
              </div>
           </div>
@@ -264,7 +270,7 @@ export default function DietaPage() {
             </div>
           </div>
 
-          {/* HISTÓRICO SEMANAL (Clicável agora) */}
+          {/* HISTÓRICO SEMANAL (Clicável) */}
           <div className="widget diet-history-widget">
             <h3 className="widget-title">Histórico Semanal</h3>
             <div className="weeks-list-diet">
@@ -291,7 +297,6 @@ export default function DietaPage() {
 
         {/* --- COLUNA DIREITA --- */}
         <div className="dieta-right-column">
-          
 
           <div className="widget">
             <h3 className="widget-title">Refeições</h3>
@@ -336,6 +341,7 @@ export default function DietaPage() {
           </div>
 
           <HydrationWidget currentAmount={waterLog[dateKey] || 0} onAdd={handleAddWater} />
+
         </div>
       </div>
 
