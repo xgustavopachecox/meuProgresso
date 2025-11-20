@@ -120,4 +120,105 @@
   border-color: #7e22ce; 
 }
 
-/* ... (resto do arquivo continua igual) ... */
+/* ... (estilos anteriores do header, summary, pots-grid, pot-card, pot-header...) */
+
+/* Adicione no estilo do cabeçalho do pote */
+.pot-goal-text {
+  font-size: 1.2rem;
+  font-weight: normal;
+  opacity: 0.7;
+}
+
+/* --- Ajustes no Item da Lista --- */
+/* ... (pot-item e icon-wrapper mantidos) ... */
+
+.item-value-container {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.item-value {
+  font-weight: bold;
+  color: #fff;
+  font-size: 1.1rem;
+}
+
+.item-goal-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: 100px; /* Largura fixa pra barra */
+}
+
+.item-goal-text {
+  font-size: 0.8rem;
+  color: #777;
+  margin-bottom: 4px;
+}
+
+.item-progress-bar {
+  width: 100%;
+  height: 4px;
+  background-color: #333;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.item-progress-fill {
+  height: 100%;
+  background-color: #1DB954; /* Verde */
+  transition: width 0.3s ease;
+}
+
+/* Cores da barra dependendo do pote (opcional, mas fica legal) */
+.pot-metas .item-progress-fill { background-color: #3b82f6; }
+.pot-essenciais .item-progress-fill { background-color: #f97316; }
+.pot-pessoal .item-progress-fill { background-color: #10b981; }
+
+/* --- Header de Navegação --- */
+.date-navigator {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.header-text-center {
+  text-align: center;
+}
+
+.header-text-center h1 {
+  margin: 0;
+  font-size: 1.8rem; /* Um pouco menor pra caber */
+  color: #fff;
+}
+
+.finance-month {
+  color: #1DB954;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  margin: 0.2rem 0 !important;
+}
+
+.date-nav-btn {
+  background: #282828;
+  border: 1px solid #333;
+  color: #eaeaea;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.date-nav-btn:hover {
+  border-color: #1DB954;
+  color: #1DB954;
+}
+
+/* ... (todo o resto do CSS continua igual) ... */
