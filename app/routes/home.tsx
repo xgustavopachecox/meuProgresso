@@ -1,200 +1,187 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './home.css';
 import AddTaskModal from '../components/AddTaskModal';
-import { LuPencil, LuTrash2 } from 'react-icons/lu';
+import { 
+  LuPlus, LuDumbbell, LuUtensils, LuWallet, 
+  LuCheck, LuCircle, LuArrowRight, LuActivity
+} from 'react-icons/lu';
 
-// Interface para o objeto de tarefa
-interface Task {
-  id: number;
-  description: string;
-  done: boolean;
-}
+// --- DADOS SIMULADOS DO DASHBOARD ---
+const MOCK_USER = { name: "Gustavo" };
 
-// --- DADOS SIMULADOS (MOCK) ---
-const MOCK_TASKS: Task[] = [
+const SUMMARY_DATA = {
+  nextWorkout: "Upper A",
+  calories: { current: 1200, total: 3200 },
+  balance: 150.00 // Saldo livre do dia/mês
+};
+
+const MOCK_TASKS = [
   { id: 1, description: 'Comprar Whey Protein', done: false },
   { id: 2, description: 'Revisar aula de Hooks', done: true },
   { id: 3, description: 'Pagar boleto da academia', done: false },
+  { id: 4, description: 'Ler 10 páginas', done: false },
 ];
 
-const MOCK_STATS = {
-  diasCertos: 15,
-  totalMes: 31,
-  treinosNoMes: 12,
-  horasEstudo: 40,
-  tarefasConcluidas: 23,
-};
-// ---------------------------------
+// Dados para o gráfico de consistência (últimos 7 dias)
+const HABIT_HISTORY = [
+  { day: 'D', score: 100 },
+  { day: 'S', score: 80 },
+  { day: 'T', score: 100 },
+  { day: 'Q', score: 60 }, // Hoje
+  { day: 'Q', score: 0 },
+  { day: 'S', score: 0 },
+  { day: 'S', score: 0 },
+];
 
 export default function HomePage() {
-  // --- ESTADOS (STATES) ---
-  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
-  const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
-  const [stats, setStats] = useState(MOCK_STATS);
-  const [tasks, setTasks] = useState<Task[]>(MOCK_TASKS);
+  const [tasks, setTasks] = useState(MOCK_TASKS);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // --- FUNÇÕES DE CONTROLE DO MODAL ---
-
-  // Abre o modal em modo "Adicionar"
-  const openAddTaskModal = () => {
-    setTaskToEdit(null); // Limpa o estado de edição
-    setIsTaskModalOpen(true);
+  // --- Lógica de Tarefas ---
+  const handleAddTask = (taskData: { description: string }) => {
+    const newTask = { id: Date.now(), description: taskData.description, done: false };
+    setTasks([newTask, ...tasks]);
+    setIsModalOpen(false);
   };
 
-  // Abre o modal em modo "Editar"
-  const openEditTaskModal = (task: Task) => {
-    setTaskToEdit(task); // Define qual tarefa estamos editando
-    setIsTaskModalOpen(true);
+  const toggleTask = (id: number) => {
+    setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
   };
 
-  // Fecha o modal
-  const closeTaskModal = () => {
-    setIsTaskModalOpen(false);
-    setTaskToEdit(null); // Limpa o estado de edição ao fechar
+  const handleDeleteTask = (id: number) => {
+    if(confirm("Remover tarefa?")) setTasks(prev => prev.filter(t => t.id !== id));
   };
 
-  // --- FUNÇÕES DE LÓGICA DAS TAREFAS ---
+  // Cálculos de Progresso
+  const calPercentage = Math.min((SUMMARY_DATA.calories.current / SUMMARY_DATA.calories.total) * 100, 100);
+  const tasksDone = tasks.filter(t => t.done).length;
+  const tasksTotal = tasks.length;
+  const tasksPercentage = tasksTotal === 0 ? 0 : Math.round((tasksDone / tasksTotal) * 100);
 
-  // Função única que ADICIONA ou EDITA
-  const handleModalSubmit = (taskData: { description: string; id?: number }) => {
-    if (taskData.id) {
-      // É UMA EDIÇÃO (porque tem ID)
-      setTasks(
-        tasks.map(t =>
-          t.id === taskData.id ? { ...t, description: taskData.description } : t
-        )
-      );
-    } else {
-      // É UMA ADIÇÃO (porque não tem ID)
-      const newTask: Task = {
-        id: Date.now(), // ID simples baseado no tempo
-        description: taskData.description,
-        done: false,
-      };
-      setTasks([newTask, ...tasks]); // Adiciona no topo da lista
-    }
+  // Saudação baseada no horário
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
 
-    closeTaskModal(); // Fecha o modal após o sucesso
-  };
-
-  // REMOVE uma tarefa
-  const handleDeleteTask = (taskId: number) => {
-    setTasks(tasks.filter(task => task.id !== taskId));
-  };
-
-  // MARCA uma tarefa como feita/não feita
-  const toggleTask = (taskId: number) => {
-    setTasks(
-      tasks.map(task =>
-        task.id === taskId ? { ...task, done: !task.done } : task
-      )
-    );
-  };
-  
   return (
-    <div className="dashboard-page-container">
-      <header className="dashboard-header">
-        <h1>Meu Progresso</h1>
-        <p>Visão Geral de Outubro, 2025</p>
+    <div className="page-container home-container">
+      
+      {/* 1. HEADER PERSONALIZADO */}
+      <header className="home-header">
+        <div>
+          <h1 className="greeting">{greeting}, <span className="user-name">{MOCK_USER.name}</span></h1>
+          <p className="subtitle">Vamos fazer hoje render!</p>
+        </div>
+        <div className="header-date">
+          {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}
+        </div>
       </header>
 
-      {/* GRID DE ESTATÍSTICAS */}
-      <div className="stats-grid">
-        <div className="stat-card">
-          <div className="stat-value">{stats.diasCertos} / {stats.totalMes}</div>
-          <div className="stat-label">Dias em Conformidade</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-value">{stats.treinosNoMes}</div>
-          <div className="stat-label">Treinos no Mês</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-value">{stats.horasEstudo}h</div>
-          <div className="stat-label">Horas de Estudo</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-value">{stats.tarefasConcluidas}</div>
-          <div className="stat-label">Tarefas Concluídas</div>
-        </div>
+      {/* 2. CARDS DE RESUMO (OS 3 PILARES) */}
+      <div className="summary-grid">
+        
+        {/* Card Treino */}
+        <Link to="/treino" className="summary-card workout-card">
+          <div className="card-icon-bg blue"><LuDumbbell size={24} /></div>
+          <div className="card-content">
+            <span className="card-label">Próximo Treino</span>
+            <h3 className="card-value">{SUMMARY_DATA.nextWorkout}</h3>
+          </div>
+          <div className="card-arrow"><LuArrowRight /></div>
+        </Link>
+
+        {/* Card Dieta */}
+        <Link to="/dieta" className="summary-card diet-card">
+          <div className="card-icon-bg orange"><LuUtensils size={24} /></div>
+          <div className="card-content">
+            <span className="card-label">Calorias (Hoje)</span>
+            <div className="diet-progress-row">
+              <h3 className="card-value">{SUMMARY_DATA.calories.current} <span className="unit">kcal</span></h3>
+              <div className="mini-progress-bar">
+                <div className="mini-fill" style={{ width: `${calPercentage}%` }}></div>
+              </div>
+            </div>
+          </div>
+          <div className="card-arrow"><LuArrowRight /></div>
+        </Link>
+
+        {/* Card Financeiro */}
+        <Link to="/financeiro" className="summary-card finance-card">
+          <div className="card-icon-bg green"><LuWallet size={24} /></div>
+          <div className="card-content">
+            <span className="card-label">Saldo Livre</span>
+            <h3 className="card-value">R$ {SUMMARY_DATA.balance.toFixed(2)}</h3>
+          </div>
+          <div className="card-arrow"><LuArrowRight /></div>
+        </Link>
       </div>
 
-      {/* LAYOUT DE DUAS COLUNAS */}
-      <div className="dashboard-main-layout">
-        <div className="main-column">
-          <div className="reports-section">
-            <button className="btn-report">Relatório Semanal</button>
-            <button className="btn-report">Relatório Mensal</button>
+      {/* 3. ÁREA PRINCIPAL (CONSISTÊNCIA E TAREFAS) */}
+      <div className="home-main-layout">
+        
+        {/* ESQUERDA: Consistência / Hábitos */}
+        <div className="left-section">
+          <div className="widget consistency-widget">
+            <div className="widget-header">
+              <h3><LuActivity /> Consistência Semanal</h3>
+              <span className="score-badge">85% Focado</span>
+            </div>
+            <div className="consistency-chart">
+              {HABIT_HISTORY.map((day, i) => (
+                <div key={i} className="day-col">
+                  <div className="day-bar-bg">
+                    <div 
+                      className="day-bar-fill" 
+                      style={{ height: `${day.score}%`, opacity: day.score ? 1 : 0.3 }}
+                    ></div>
+                  </div>
+                  <span className="day-letter">{day.day}</span>
+                </div>
+              ))}
+            </div>
+            <p className="consistency-tip">Você está mandando bem! Mantenha o ritmo nos estudos hoje.</p>
           </div>
-          <div className="chart-placeholder">
-            <p>(Em breve: Gráfico de Progresso Semanal)</p>
-          </div>
+
+          {/* Aqui poderia entrar um card de "Próximo estudo" no futuro */}
         </div>
 
-        <div className="side-column">
-          {/* WIDGET DE TAREFAS */}
-          <div className="tasks-widget">
-            <h3 className="widget-title">Tarefas de Hoje</h3>
-            <ul className="tasks-list">
-              
-              {tasks.map(task => (
-                <li key={task.id} className="task-item">
-                  
-                  {/* Parte clicável (checkbox e texto) */}
-                  <div className="task-content" onClick={() => toggleTask(task.id)}>
-                    <div className={`task-checkbox ${task.done ? 'done' : ''}`}>
-                      {task.done && '✔'}
-                    </div>
-                    <span className={`task-description ${task.done ? 'done' : ''}`}>
-                      {task.description}
-                    </span>
-                  </div>
+        {/* DIREITA: Tarefas do Dia */}
+        <div className="right-section">
+          <div className="widget tasks-home-widget">
+            <div className="widget-header">
+              <h3>Tarefas de Hoje</h3>
+              <span className="tasks-count">{tasksDone}/{tasksTotal}</span>
+            </div>
+            
+            {/* Barra de Progresso das Tarefas */}
+            <div className="tasks-progress-bar">
+              <div className="tasks-fill" style={{ width: `${tasksPercentage}%` }}></div>
+            </div>
 
-                  {/* Botões de Ação */}
-                  <div className="task-actions">
-                    <button 
-                      className="task-action-btn"
-                      onClick={(e) => {
-                        e.stopPropagation(); // Impede o clique de marcar/desmarcar
-                        openEditTaskModal(task); 
-                      }}
-                    >
-                      <LuPencil size={16} />
-                    </button>
-                    <button 
-                      className="task-action-btn delete"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteTask(task.id);
-                      }}
-                    >
-                      <LuTrash2 size={16} />
-                    </button>
-                  </div>
+            <ul className="home-tasks-list">
+              {tasks.map(task => (
+                <li key={task.id} className={`home-task-item ${task.done ? 'done' : ''}`} onClick={() => toggleTask(task.id)}>
+                  {task.done ? <LuCheck className="check-icon done" /> : <LuCircle className="check-icon" />}
+                  <span className="task-text">{task.description}</span>
                 </li>
               ))}
+              {tasks.length === 0 && <p className="empty-tasks">Tudo feito por hoje!</p>}
             </ul>
 
-            {tasks.length === 0 && <p className="no-tasks">Nenhuma tarefa para hoje.</p>}
-            
-            <button 
-              className="btn-add-task-widget" 
-              onClick={openAddTaskModal} // Abre o modal em modo "Adicionar"
-            >
-              + Adicionar Tarefa
+            <button className="btn-add-task-home" onClick={() => setIsModalOpen(true)}>
+              <LuPlus /> Nova Tarefa
             </button>
           </div>
         </div>
+
       </div>
 
-      {/* BOTÃO FLUTUANTE (FAB) */}
-      <button className="fab" onClick={openAddTaskModal}>+</button>
-      
-      {/* MODAL (agora reutilizável) */}
+      {/* Modal de Adicionar Tarefa */}
       <AddTaskModal 
-        isOpen={isTaskModalOpen}
-        onClose={closeTaskModal}
-        onSubmit={handleModalSubmit}
-        taskToEdit={taskToEdit}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleAddTask} // Ajuste aqui se seu modal pedir objeto, senão use wrapper
+        taskToEdit={null} // Se o modal pedir isso
       />
     </div>
   );
