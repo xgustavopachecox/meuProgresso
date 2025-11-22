@@ -10,6 +10,7 @@ import {
   LuTerminal, // Mudei para Terminal para programação (mais tech)
   LuZap, // Usei um raio para a Logo
   LuWallet, // Financeiro
+  LuTrendingUp,
   LuFlower2 // Espiritual
 } from 'react-icons/lu';
 
@@ -64,6 +65,13 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
             <NavLink to="/financeiro">
               <LuWallet size={22} />
               {isOpen && <span>Financeiro</span>}
+            </NavLink>
+          </li>
+
+          <li>
+            <NavLink to="/progresso">
+              <LuTrendingUp size={22} />
+              {isOpen && <span>Progresso</span>}
             </NavLink>
           </li>
           

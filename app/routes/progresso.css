@@ -1,0 +1,167 @@
+.timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* --- CARD DA SEMANA --- */
+.week-summary-card {
+  background-color: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 16px;
+  padding: 1.5rem;
+  position: relative;
+}
+
+/* Efeito visual de conexão (linha do tempo) - Opcional */
+.week-summary-card::before {
+  content: '';
+  position: absolute;
+  left: 2rem;
+  top: -2rem;
+  height: 2rem;
+  width: 2px;
+  background-color: #27272a;
+  display: none; /* Ative se quiser a linha conectando */
+}
+
+/* Header da Semana */
+.week-summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #27272a;
+  padding-bottom: 1rem;
+}
+
+.week-title-group {
+  display: flex;
+  gap: 1rem;
+}
+
+.calendar-icon {
+  color: #1DB954;
+  margin-top: 4px;
+}
+
+.week-summary-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #fff;
+}
+
+.week-date {
+  color: #71717a;
+  font-size: 0.9rem;
+}
+
+.week-badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background-color: #27272a;
+  color: #aaa;
+}
+.week-badge.active {
+  background-color: rgba(29, 185, 84, 0.15);
+  color: #1DB954;
+  border: 1px solid rgba(29, 185, 84, 0.3);
+}
+
+/* --- GRID DOS PILARES --- */
+.pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .pillars-grid {
+    grid-template-columns: 1fr; /* Empilha no celular */
+  }
+}
+
+/* Box Genérico do Pilar */
+.pillar-box {
+  background-color: #121212;
+  border: 1px solid #27272a;
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Cores de borda baseadas no status */
+.pillar-box.success { border-left: 3px solid #1DB954; }
+.pillar-box.fail { border-left: 3px solid #ef4444; }
+.pillar-box.neutral { border-left: 3px solid #71717a; }
+
+.pillar-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #a1a1aa;
+  margin-bottom: 0.8rem;
+}
+
+.workout-box .pillar-header svg { color: #3b82f6; }
+.diet-box .pillar-header svg { color: #f97316; }
+.finance-box .pillar-header svg { color: #10b981; }
+
+.pillar-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.pillar-big-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+
+.pillar-sub {
+  font-size: 0.8rem;
+  color: #71717a;
+}
+
+.pillar-detail {
+  font-size: 0.75rem;
+  color: #555;
+  margin-top: 4px;
+}
+
+/* Ícone de Status (Check/X) */
+.pillar-status-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.icon-success { color: #1DB954; }
+.icon-fail { color: #ef4444; }
+.icon-neutral { color: #3f3f46; }
+
+/* Estilos específicos do Financeiro */
+.finance-row {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-bottom: 0.3rem;
+}
+.up-icon { color: #10b981; }
+.saved-text {
+  color: #10b981;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.spent-text {
+  color: #ef4444;
+  font-size: 0.85rem;
+}
