@@ -9,5 +9,6 @@ export default [
   route("dieta", "routes/dieta.tsx"),
   route("financeiro", "routes/financeiro.tsx"),
   route("progresso", "routes/progresso.tsx"),
+  route("anotacoes", "routes/anotacoes.tsx"),
 
 ] satisfies RouteConfig;

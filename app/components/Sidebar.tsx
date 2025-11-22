@@ -13,7 +13,7 @@ import {
   LuTrendingUp,
   LuFlower2 // Espiritual
 } from 'react-icons/lu';
-
+import { LuStickyNote } from 'react-icons/lu';
 interface SidebarProps {
   isOpen: boolean;
   onToggle: () => void;
@@ -72,6 +72,12 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
             <NavLink to="/progresso">
               <LuTrendingUp size={22} />
               {isOpen && <span>Progresso</span>}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/anotacoes">
+              <LuStickyNote size={22} />
+              {isOpen && <span>Anotações</span>}
             </NavLink>
           </li>
           

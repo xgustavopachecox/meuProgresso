@@ -1,0 +1,238 @@
+/* --- HEADER DAS ABAS --- */
+.tabs-header {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 1px solid #27272a;
+  margin-bottom: 2rem;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  padding: 1rem 1.5rem;
+  color: #a1a1aa;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.tab-btn:hover {
+  color: #fff;
+}
+
+.tab-btn.active {
+  color: #1DB954;
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #1DB954;
+}
+
+/* --- SEÇÃO DE NOTAS --- */
+.create-note-bar {
+  background-color: #18181b;
+  border: 1px solid #3f3f46;
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #a1a1aa;
+  cursor: text;
+  margin-bottom: 2rem;
+  transition: border-color 0.2s;
+}
+.create-note-bar:hover {
+  border-color: #71717a;
+  color: #ccc;
+}
+
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.note-card {
+  background-color: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 150px;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.note-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  border-color: #3f3f46;
+}
+
+/* Cores sutis para as notas (bordas ou detalhes) */
+.note-card.blue { border-top: 4px solid #3b82f6; }
+.note-card.yellow { border-top: 4px solid #eab308; }
+.note-card.gray { border-top: 4px solid #71717a; }
+
+.note-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.8rem;
+}
+.note-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #fff;
+}
+.note-header button {
+  background: transparent; border: none; color: #52525b; cursor: pointer;
+  padding: 4px; opacity: 0; transition: opacity 0.2s;
+}
+.note-card:hover .note-header button { opacity: 1; }
+.note-header button:hover { color: #ef4444; }
+
+.note-content {
+  color: #d4d4d8;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  white-space: pre-wrap; /* Mantém quebras de linha */
+  flex-grow: 1;
+}
+
+.note-date {
+  font-size: 0.75rem;
+  color: #52525b;
+  margin-top: 1rem;
+  text-align: right;
+}
+
+/* --- SEÇÃO DE TAREFAS --- */
+.tasks-section {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.add-task-form {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.add-task-form input {
+  flex-grow: 1;
+  background-color: #18181b;
+  border: 1px solid #3f3f46;
+  border-radius: 8px;
+  padding: 1rem;
+  color: #fff;
+  font-size: 1rem;
+}
+.add-task-form input:focus {
+  outline: none; border-color: #1DB954;
+}
+
+.btn-add-task {
+  background-color: #1DB954;
+  border: none;
+  border-radius: 8px;
+  width: 50px;
+  color: #000;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btn-add-task:hover { background-color: #1ed760; }
+
+.general-tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.general-task-item {
+  background-color: #18181b;
+  border: 1px solid #27272a;
+  padding: 1rem;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s;
+}
+
+.task-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  flex-grow: 1;
+}
+
+.checkbox-custom {
+  width: 20px; height: 20px;
+  border: 2px solid #52525b;
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+
+.general-task-item.done .checkbox-custom {
+  background-color: #1DB954;
+  border-color: #1DB954;
+}
+
+.general-task-item span {
+  font-size: 1rem;
+  color: #eaeaea;
+}
+.general-task-item.done span {
+  text-decoration: line-through;
+  color: #52525b;
+}
+
+.btn-delete-task {
+  background: transparent; border: none; color: #52525b;
+  cursor: pointer; opacity: 0; transition: opacity 0.2s;
+}
+.general-task-item:hover .btn-delete-task { opacity: 1; }
+.btn-delete-task:hover { color: #ef4444; }
+
+/* --- MODAL DE NOTA --- */
+.note-title-input {
+  width: 100%;
+  background: transparent !important;
+  border: none !important;
+  color: #fff !important;
+  font-size: 1.5rem !important;
+  font-weight: 700;
+  padding: 0.5rem 0 !important;
+  margin-bottom: 1rem;
+}
+.note-title-input:focus { box-shadow: none !important; }
+
+.note-content-input {
+  width: 100%;
+  height: 200px;
+  background: transparent !important;
+  border: none !important;
+  color: #d4d4d8 !important;
+  font-size: 1rem;
+  resize: none;
+  padding: 0 !important;
+  font-family: inherit;
+}
+.note-content-input:focus { box-shadow: none !important; }
