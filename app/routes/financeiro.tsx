@@ -3,23 +3,23 @@ import './financeiro.css';
 import { 
   LuWallet, LuTrendingUp, LuShieldCheck, LuBriefcase, 
   LuUtensils, LuDumbbell, LuSmile, LuPlus, LuMinus,
-  LuFuel, LuShoppingCart, LuTag, LuChevronLeft, LuChevronRight 
+  LuFuel, LuShoppingCart, LuTag 
 } from 'react-icons/lu';
 import AddTransactionModal from '../components/AddTransactionModal';
+import api from '../services/api'; // <-- CONEXÃO COM O BACKEND
 
 // --- DADOS INICIAIS (TEMPLATE) ---
-// Usamos isso para criar um mês novo zerado
-const INITIAL_POTES_TEMPLATE = [
+const INITIAL_POTES = [
   {
     id: 'metas',
     title: 'Pote Metas (Guardado)',
     description: 'Dinheiro acumulado/investido.',
     colorClass: 'pot-metas',
-    icon: <LuTrendingUp size={24} />,
+    iconName: 'TrendingUp', // Trocamos o componente direto por string pra salvar no banco
     items: [
-      { name: 'Reserva de Emergência', value: 0.00, goal: 300.00, desc: 'Guardado e rendendo', icon: <LuShieldCheck /> },
-      { name: 'Investimentos LP', value: 0.00, goal: 200.00, desc: 'Foco no longo prazo', icon: <LuTrendingUp /> },
-      { name: 'Capital para Negócio', value: 0.00, goal: 300.00, desc: 'Para seu projeto', icon: <LuBriefcase /> },
+      { name: 'Reserva de Emergência', value: 0.00, goal: 300.00, desc: 'Guardado e rendendo', iconName: 'ShieldCheck' },
+      { name: 'Investimentos LP', value: 0.00, goal: 200.00, desc: 'Foco no longo prazo', iconName: 'TrendingUp' },
+      { name: 'Capital para Negócio', value: 0.00, goal: 300.00, desc: 'Para seu projeto', iconName: 'Briefcase' },
     ]
   },
   {
@@ -27,10 +27,10 @@ const INITIAL_POTES_TEMPLATE = [
     title: 'Pote Essenciais (Gastos)',
     description: 'O custo para se manter de pé.',
     colorClass: 'pot-essenciais',
-    icon: <LuWallet size={24} />,
+    iconName: 'Wallet',
     items: [
-      { name: 'Alimentação', value: 0.00, goal: 200.00, desc: 'Ajuda em casa', icon: <LuUtensils /> },
-      { name: 'Academia', value: 0.00, goal: 70.00, desc: 'Mensalidade', icon: <LuDumbbell /> },
+      { name: 'Alimentação', value: 0.00, goal: 200.00, desc: 'Ajuda em casa', iconName: 'Utensils' },
+      { name: 'Academia', value: 0.00, goal: 70.00, desc: 'Mensalidade', iconName: 'Dumbbell' },
     ]
   },
   {
@@ -38,9 +38,9 @@ const INITIAL_POTES_TEMPLATE = [
     title: 'Pote Pessoal (Livre)',
     description: 'O que você gastou com você.',
     colorClass: 'pot-pessoal',
-    icon: <LuSmile size={24} />,
+    iconName: 'Smile',
     items: [
-      { name: 'Lazer & Gastos', value: 0.00, goal: 610.00, desc: 'Livre para gastar', icon: <LuSmile /> },
+      { name: 'Lazer & Gastos', value: 0.00, goal: 610.00, desc: 'Livre para gastar', iconName: 'Smile' },
     ]
   },
   {
@@ -48,51 +48,74 @@ const INITIAL_POTES_TEMPLATE = [
     title: 'Variáveis & Transporte',
     description: 'Combustível, Uber e imprevistos.',
     colorClass: 'pot-variaveis',
-    icon: <LuFuel size={24} />,
+    iconName: 'Fuel',
     items: [
-      { name: 'Novo Gasto Variável...', value: 0.00, goal: 0, desc: 'Clique para registrar', icon: <LuPlus /> },
+      { name: 'Novo Gasto Variável...', value: 0.00, goal: 0, desc: 'Clique para registrar', iconName: 'Plus' },
     ]
   }
 ];
 
-// Tipo para os dados de UM mês
-interface MonthData {
-  saldoLivre: number;
-  potes: typeof INITIAL_POTES_TEMPLATE;
-}
+// Helper para renderizar ícones dinamicamente
+const getIcon = (name: string) => {
+  const size = 24;
+  switch(name) {
+    case 'TrendingUp': return <LuTrendingUp size={size} />;
+    case 'ShieldCheck': return <LuShieldCheck size={size} />;
+    case 'Briefcase': return <LuBriefcase size={size} />;
+    case 'Wallet': return <LuWallet size={size} />;
+    case 'Utensils': return <LuUtensils size={size} />;
+    case 'Dumbbell': return <LuDumbbell size={size} />;
+    case 'Smile': return <LuSmile size={size} />;
+    case 'Fuel': return <LuFuel size={size} />;
+    case 'ShoppingCart': return <LuShoppingCart size={size} />;
+    case 'Tag': return <LuTag size={size} />;
+    case 'Plus': return <LuPlus size={size} />;
+    default: return <LuWallet size={size} />;
+  }
+};
 
 export default function FinanceiroPage() {
-  // Data atual selecionada (Visualização)
-  const [currentDate, setCurrentDate] = useState(new Date());
-  
-  // ESTADO GLOBAL: Guarda todos os meses. 
-  // Chave: "2025-11" -> Valor: { saldoLivre: 100, potes: [...] }
-  const [allMonthsData, setAllMonthsData] = useState<Record<string, MonthData>>({});
-
-  // Modais e Controles
+  const [potes, setPotes] = useState<any[]>([]); // Começa vazio, carrega do banco
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [transactionType, setTransactionType] = useState<'entry' | 'exit'>('entry');
+  const [saldoLivre, setSaldoLivre] = useState(0.00); 
 
-  // --- HELPER: Gera a chave do mês (ex: "2025-10") ---
-  const getMonthKey = (date: Date) => `${date.getFullYear()}-${date.getMonth()}`;
-  const currentKey = getMonthKey(currentDate);
+  // 1. CARREGAR DADOS AO INICIAR
+  useEffect(() => {
+    // Carregar saldo do localStorage (solução simples pra saldo)
+    const savedSaldo = localStorage.getItem('saldoLivre');
+    if (savedSaldo) setSaldoLivre(parseFloat(savedSaldo));
 
-  // --- RECUPERA OS DADOS DO MÊS ATUAL ---
-  // Se não existir dados para este mês, usa o Template Zerado
-  const currentData = allMonthsData[currentKey] || {
-    saldoLivre: 0.00,
-    potes: INITIAL_POTES_TEMPLATE
+    // Carregar potes do Banco de Dados
+    api.get('/pots')
+      .then(response => {
+        if (response.data.length === 0) {
+          // SE O BANCO TIVER VAZIO: Inicializa com o template
+          console.log("Banco vazio. Inicializando dados padrão...");
+          initializeDatabase();
+        } else {
+          setPotes(response.data);
+        }
+      })
+      .catch(err => console.error("Erro ao carregar potes:", err));
+  }, []);
+
+  // Função para salvar os dados padrão no banco pela primeira vez
+  const initializeDatabase = async () => {
+    const promises = INITIAL_POTES.map(pote => api.post('/pots', pote));
+    await Promise.all(promises);
+    // Recarrega do banco para garantir que temos os IDs certos se necessário
+    const response = await api.get('/pots');
+    setPotes(response.data);
   };
 
-  // Formatadores
-  const monthYearString = currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-  const formatCurrency = (value: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+  // Salva o saldo no localStorage sempre que mudar
+  useEffect(() => {
+    localStorage.setItem('saldoLivre', saldoLivre.toString());
+  }, [saldoLivre]);
 
-  // --- NAVEGAÇÃO DE DATA ---
-  const changeMonth = (offset: number) => {
-    const newDate = new Date(currentDate);
-    newDate.setMonth(newDate.getMonth() + offset);
-    setCurrentDate(newDate);
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
 
   const openModal = (type: 'entry' | 'exit') => {
@@ -100,102 +123,85 @@ export default function FinanceiroPage() {
     setIsModalOpen(true);
   };
 
-  // --- LÓGICA PRINCIPAL ---
   const handleTransaction = (data: { itemName: string | null; amount: number; customName?: string }) => {
-    
-    // Vamos criar uma cópia dos dados do mês atual (ou criar um novo objeto se for o primeiro registro)
-    const prevData = allMonthsData[currentKey] || { saldoLivre: 0.00, potes: INITIAL_POTES_TEMPLATE };
-    
-    let newSaldo = prevData.saldoLivre;
-    let newPotes = [...prevData.potes]; // Cópia rasa do array de potes
-
     if (transactionType === 'entry') {
-      // ENTRADA
-      newSaldo += data.amount;
+      setSaldoLivre(prev => prev + data.amount);
     } else {
-      // SAÍDA
-      newSaldo -= data.amount;
+      setSaldoLivre(prev => prev - data.amount);
 
-      // Atualiza os potes (Cria uma cópia profunda dos itens para não afetar o template original)
-      newPotes = newPotes.map(pote => {
-        // Lógica de Variáveis (Novo Item)
+      const newPotes = potes.map(pote => {
+        // Variáveis (Novo Item)
         if (data.customName && pote.id === 'variaveis') {
           const newItem = {
             name: data.customName,
             value: data.amount,
             goal: 0,
             desc: 'Gasto Variável',
-            icon: <LuTag />
+            iconName: 'Tag' // Salva a string do nome do ícone
           };
-          return { ...pote, items: [newItem, ...pote.items] };
+          
+          const updatedPote = { ...pote, items: [newItem, ...pote.items], total: pote.total + data.amount };
+          
+          // SALVA NO BANCO DE DADOS
+          api.post('/pots', updatedPote).catch(err => console.error("Erro ao salvar:", err));
+          
+          return updatedPote;
         }
 
-        // Lógica de Item Fixo (Atualizar)
-        const itemIndex = pote.items.findIndex(item => item.name === data.itemName);
+        // Item Fixo (Atualizar)
+        const itemIndex = pote.items.findIndex((item: any) => item.name === data.itemName);
         if (itemIndex !== -1 && !data.customName) {
-          const updatedItems = pote.items.map((item, idx) => {
-            if (idx === itemIndex) {
-              return { ...item, value: item.value + data.amount };
-            }
-            return item;
-          });
-          return { ...pote, items: updatedItems };
+          const updatedItems = [...pote.items];
+          updatedItems[itemIndex] = {
+            ...updatedItems[itemIndex],
+            value: updatedItems[itemIndex].value + data.amount
+          };
+          
+          const updatedPote = { ...pote, items: updatedItems, total: pote.total + data.amount };
+
+          // SALVA NO BANCO DE DADOS
+          api.post('/pots', updatedPote).catch(err => console.error("Erro ao salvar:", err));
+
+          return updatedPote;
         }
         return pote;
       });
+      setPotes(newPotes);
     }
-
-    // SALVA NO ESTADO GLOBAL, NA CHAVE DO MÊS CERTO
-    setAllMonthsData({
-      ...allMonthsData,
-      [currentKey]: {
-        saldoLivre: newSaldo,
-        potes: newPotes
-      }
-    });
   };
+
+  const currentDate = new Date();
+  const monthYear = currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
 
   return (
     <div className="page-container">
-      
-      {/* HEADER DE NAVEGAÇÃO */}
-      <header className="page-header date-navigator">
-        <button className="date-nav-btn" onClick={() => changeMonth(-1)}>
-          <LuChevronLeft size={24} />
-        </button>
-        
-        <div className="header-text-center">
-          <h1>Financeiro</h1>
-          <p className="finance-month">{monthYearString}</p>
-        </div>
-
-        <button className="date-nav-btn" onClick={() => changeMonth(1)}>
-          <LuChevronRight size={24} />
-        </button>
+      <header className="page-header">
+        <h1>Financeiro</h1>
+        <p className="finance-month">{monthYear}</p>
+        <p>Controle de Fluxo de Caixa e Potes.</p>
       </header>
 
-      {/* CARD DE SALDO */}
       <div className="finance-summary">
         <div className="income-card">
-          <span className="income-label">Saldo Disponível em {currentDate.toLocaleDateString('pt-BR', { month: 'long' })}</span>
-          <span className={`income-value ${currentData.saldoLivre < 0 ? 'negative' : ''}`}>
-            {formatCurrency(currentData.saldoLivre)}
+          <span className="income-label">Saldo em Caixa (Disponível)</span>
+          <span className={`income-value ${saldoLivre < 0 ? 'negative' : ''}`}>
+            {formatCurrency(saldoLivre)}
           </span>
         </div>
       </div>
 
-      {/* GRID DOS POTES */}
       <div className="pots-grid">
-        {currentData.potes.map((pote: any) => {
-          const potCurrent = pote.items.reduce((acc: number, item: any) => acc + item.value, 0);
-          const potGoal = pote.items.reduce((acc: number, item: any) => acc + (item.goal || 0), 0);
+        {potes.map(pote => {
+          // Recalcula totais para garantir visualização
+          const potCurrent = pote.items ? pote.items.reduce((acc: number, item: any) => acc + item.value, 0) : 0;
+          const potGoal = pote.items ? pote.items.reduce((acc: number, item: any) => acc + (item.goal || 0), 0) : 0;
           const showGoalHeader = potGoal > 0;
 
           return (
             <div key={pote.id} className={`pot-card ${pote.colorClass}`}>
               <div className="pot-header">
                 <div className="pot-title-row">
-                  {pote.icon}
+                  {getIcon(pote.iconName)}
                   <h3>{pote.title}</h3>
                 </div>
                 <div className="pot-total">
@@ -206,10 +212,10 @@ export default function FinanceiroPage() {
               </div>
 
               <div className="pot-items-list">
-                {pote.items.map((item: any, index: number) => (
+                {pote.items && pote.items.map((item: any, index: number) => (
                   <div key={index} className="pot-item">
                     <div className="item-icon-wrapper">
-                      {item.icon || <LuWallet />} {/* Fallback icon */}
+                      {getIcon(item.iconName)}
                     </div>
                     <div className="item-info">
                       <span className="item-name">{item.name}</span>
@@ -239,7 +245,6 @@ export default function FinanceiroPage() {
         })}
       </div>
 
-      {/* BOTÕES DE AÇÃO */}
       <div className="finance-actions-container">
         <button className="btn-action btn-entry" onClick={() => openModal('entry')}>
           <LuPlus size={24} />
@@ -254,8 +259,7 @@ export default function FinanceiroPage() {
       <AddTransactionModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        // Passamos os potes ATUAIS para o modal saber o que mostrar no select
-        potesData={currentData.potes} 
+        potesData={potes}
         onSubmit={handleTransaction}
         type={transactionType}
       />
