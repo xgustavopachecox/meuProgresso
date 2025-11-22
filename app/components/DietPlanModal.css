@@ -1,0 +1,91 @@
+/* Reutiliza overlay e content básicos */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 1000;
+}
+
+.modal-content.plan-modal {
+  background-color: #18181b;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 12px;
+  border: 1px solid #27272a;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  max-height: 85vh; /* Limite de altura */
+}
+
+.modal-header {
+  padding: 1.5rem;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid #27272a;
+  background-color: #202023;
+}
+
+.header-title {
+  display: flex; align-items: center; gap: 0.8rem;
+}
+.header-title h2 {
+  margin: 0; font-size: 1.3rem; color: #fff;
+}
+
+.plan-body {
+  padding: 1.5rem;
+  overflow-y: auto; /* Scroll se a lista for grande */
+}
+
+.plan-subtitle {
+  margin-top: 0;
+  color: #71717a;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Lista de Cards do Plano */
+.plan-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.plan-card {
+  background-color: #121212;
+  border: 1px solid #27272a;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.plan-card-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 0.8rem;
+  border-bottom: 1px dashed #333;
+  padding-bottom: 0.5rem;
+}
+
+.plan-meal-name {
+  color: #1DB954;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.plan-time {
+  color: #555;
+  font-size: 0.8rem;
+  display: flex; align-items: center; gap: 4px;
+}
+
+.plan-items {
+  list-style: none; padding: 0; margin: 0;
+}
+
+.plan-items li {
+  display: flex; justify-content: space-between;
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+}
+.plan-items li:last-child { margin-bottom: 0; }
+
+.item-name { color: #ccc; }
+.item-amount { color: #fff; font-weight: 600; }

@@ -1,9 +1,12 @@
 import { useState, useMemo, useEffect } from 'react';
 import './dieta.css';
+// IMPORTANDO O NOVO MODAL E O TIPO FoodData
 import AddFoodModal, { type FoodData } from '../components/AddFoodModal';
+import DietPlanModal from '../components/DietPlanModal'; 
+
 import { 
   LuPlus, LuChevronDown, LuChevronRight, LuChevronLeft, LuCalendar, 
-  LuCheck, LuArrowLeft, LuX, LuTrophy 
+  LuCheck, LuArrowLeft, LuX, LuTrophy, LuClipboardList // Novo ícone
 } from 'react-icons/lu';
 import HydrationWidget from '../components/HydrationWidget';
 
@@ -89,9 +92,14 @@ export default function DietaPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [meals, setMeals] = useState<MealsState>(MOCK_MEALS_TODAY);
   const [waterLog, setWaterLog] = useState<Record<string, number>>({});
+
+  // Estados dos Modais
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPlanModalOpen, setIsPlanModalOpen] = useState(false); // <--- NOVO ESTADO
+  
   const [currentMealName, setCurrentMealName] = useState('');
   const [expandedMeal, setExpandedMeal] = useState<string | null>(null);
+
   const dateKey = currentDate.toDateString();
 
   useEffect(() => {
@@ -134,10 +142,12 @@ export default function DietaPage() {
   };
   const goBack = () => { setViewMode('DAILY'); setSelectedWeek(null); };
   const handleAddWater = (amount: number) => { setWaterLog(prev => ({ ...prev, [dateKey]: Math.max(0, (prev[dateKey] || 0) + amount) })); };
+  
   const handleAddFood = (foodData: FoodData) => {
     setMeals(prev => ({ ...prev, [currentMealName]: [...prev[currentMealName], foodData] }));
     setExpandedMeal(currentMealName);
   };
+
   const handleOpenModal = (name: string) => { setCurrentMealName(name); setIsModalOpen(true); };
   const handleCloseModal = () => setIsModalOpen(false);
   const toggleMealExpansion = (name: string) => setExpandedMeal(expandedMeal === name ? null : name);
@@ -149,6 +159,7 @@ export default function DietaPage() {
   };
   const formattedDate = currentDate.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' });
 
+  // --- TELA SEMANAL ---
   if (viewMode === 'WEEK_DETAIL' && selectedWeek) {
     const totalWeekCalories = selectedWeek.days.reduce((acc, day) => acc + day.calories, 0);
     const totalWeekGoal = METAS_DIARIAS.calorias * selectedWeek.days.length;
@@ -183,6 +194,7 @@ export default function DietaPage() {
     );
   }
 
+  // --- TELA DIÁRIA ---
   return (
     <div className="page-container">
       <header className="page-header date-navigator">
@@ -191,82 +203,93 @@ export default function DietaPage() {
         <button className="date-nav-btn" onClick={() => changeDate(1)} disabled={isDateToday(currentDate)}><LuChevronRight size={24} /></button>
       </header>
 
-      {/* --- GRID LAYOUT (Sem colunas, direto no grid) --- */}
       <div className="dieta-layout">
         
-        {/* ÁREA 1: RESUMO */}
-        <div className="widget summary-widget area-resumo">
-          <h3 className="widget-title">Resumo do Dia</h3>
-          <div className="calorie-circle">
-            <span className="consumed-value">{Math.round(totalConsumed.calorias)}</span>
-            <span className="goal-divider">/</span>
-            <span className="goal-value">{METAS_DIARIAS.calorias} kcal</span>
+        {/* ESQUERDA */}
+        <div className="dieta-left-column">
+          <div className="widget summary-widget area-resumo">
+            <h3 className="widget-title">Resumo do Dia</h3>
+            <div className="calorie-circle">
+              <span className="consumed-value">{Math.round(totalConsumed.calorias)}</span>
+              <span className="goal-divider">/</span>
+              <span className="goal-value">{METAS_DIARIAS.calorias} kcal</span>
+            </div>
+            <div className="remaining-macros">
+              <div className="macro-item"><span className="macro-label">Proteínas</span><span className="macro-value protein">{Math.round(remainingProtein)}g</span></div>
+              <div className="macro-item"><span className="macro-label">Carboidratos</span><span className="macro-value carbs">{Math.round(remainingCarbs)}g</span></div>
+              <div className="macro-item"><span className="macro-label">Gorduras</span><span className="macro-value fat">{Math.round(remainingFat)}g</span></div>
+            </div>
           </div>
-          <div className="remaining-macros">
-            <div className="macro-item"><span className="macro-label">Proteínas</span><span className="macro-value protein">{Math.round(remainingProtein)}g</span></div>
-            <div className="macro-item"><span className="macro-label">Carboidratos</span><span className="macro-value carbs">{Math.round(remainingCarbs)}g</span></div>
-            <div className="macro-item"><span className="macro-label">Gorduras</span><span className="macro-value fat">{Math.round(remainingFat)}g</span></div>
-          </div>
-        </div>
 
-        {/* ÁREA 2: REFEIÇÕES */}
-        <div className="widget area-refeicoes">
-          <h3 className="widget-title">Refeições</h3>
-          <div className="meals-list">
-            {REFEICOES_PADRAO.map(meal => {
-              const isExpanded = expandedMeal === meal.name;
-              const foods = meals[meal.name] || [];
-              const mealCals = foods.reduce((acc, f) => acc + f.calories, 0);
-              return (
-                <div key={meal.id} className="meal-accordion">
-                  <div className="meal-item-header" onClick={() => toggleMealExpansion(meal.name)}>
-                    <div className="meal-header-left">
-                      {isExpanded ? <LuChevronDown size={20} /> : <LuChevronRight size={20} />}
-                      <div className="meal-info-header"><span className="meal-name">{meal.name}</span><span className="meal-cal-total">{Math.round(mealCals)} kcal</span></div>
-                    </div>
-                    <button className="btn-add-food" onClick={(e) => { e.stopPropagation(); handleOpenModal(meal.name); }}><LuPlus size={16} /></button>
+          <div className="widget diet-history-widget area-historico">
+            <h3 className="widget-title">Histórico Semanal</h3>
+            <div className="weeks-list-diet">
+              {MOCK_WEEKLY_DETAILS.map(week => (
+                <div key={week.id} className="week-card-diet" onClick={() => openWeekDetails(week.id)}>
+                  <div className="week-header-diet"><LuCalendar size={18} /><span>{week.label}</span></div>
+                  <div className="week-body-diet">
+                    <span className={`status-badge ${week.status === 'Em andamento' ? 'active' : ''}`}>{week.status}</span>
+                    <div className="compliance-tag"><LuCheck size={14} /> {week.compliance}</div>
                   </div>
-                  {isExpanded && (
-                    <div className="meal-content-body">
-                      {foods.length === 0 ? <p className="no-food-item">Vazio</p> : (
-                        <ul className="food-list">
-                          {foods.map((f, i) => (
-                            <li key={i} className="food-item"><span className="food-item-name">{f.name}</span><span className="food-item-calories">{Math.round(f.calories)}</span></li>
-                          ))}
-                        </ul>
-                      )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* DIREITA */}
+        <div className="dieta-right-column">
+          <div className="widget area-refeicoes">
+            
+            {/* HEADER CUSTOMIZADO COM O BOTÃO */}
+            <div className="widget-header-actions">
+              <h3 className="widget-title-clean">Refeições</h3>
+              <button className="btn-view-plan" onClick={() => setIsPlanModalOpen(true)}>
+                <LuClipboardList size={16} /> Ver Dieta
+              </button>
+            </div>
+
+            <div className="meals-list">
+              {REFEICOES_PADRAO.map(meal => {
+                const isExpanded = expandedMeal === meal.name;
+                const foods = meals[meal.name] || [];
+                const mealCals = foods.reduce((acc, f) => acc + f.calories, 0);
+                return (
+                  <div key={meal.id} className="meal-accordion">
+                    <div className="meal-item-header" onClick={() => toggleMealExpansion(meal.name)}>
+                      <div className="meal-header-left">
+                        {isExpanded ? <LuChevronDown size={20} /> : <LuChevronRight size={20} />}
+                        <div className="meal-info-header"><span className="meal-name">{meal.name}</span><span className="meal-cal-total">{Math.round(mealCals)} kcal</span></div>
+                      </div>
+                      <button className="btn-add-food" onClick={(e) => { e.stopPropagation(); handleOpenModal(meal.name); }}><LuPlus size={16} /></button>
                     </div>
-                  )}
-                </div>
-              );
-            })}
+                    {isExpanded && (
+                      <div className="meal-content-body">
+                        {foods.length === 0 ? <p className="no-food-item">Vazio</p> : (
+                          <ul className="food-list">
+                            {foods.map((f, i) => (
+                              <li key={i} className="food-item"><span className="food-item-name">{f.name}</span><span className="food-item-calories">{Math.round(f.calories)}</span></li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="area-agua">
+             <HydrationWidget currentAmount={waterLog[dateKey] || 0} onAdd={handleAddWater} />
           </div>
         </div>
-
-        {/* ÁREA 3: HISTÓRICO */}
-        <div className="widget diet-history-widget area-historico">
-          <h3 className="widget-title">Histórico Semanal</h3>
-          <div className="weeks-list-diet">
-            {MOCK_WEEKLY_DETAILS.map(week => (
-              <div key={week.id} className="week-card-diet" onClick={() => openWeekDetails(week.id)}>
-                <div className="week-header-diet"><LuCalendar size={18} /><span>{week.label}</span></div>
-                <div className="week-body-diet">
-                  <span className={`status-badge ${week.status === 'Em andamento' ? 'active' : ''}`}>{week.status}</span>
-                  <div className="compliance-tag"><LuCheck size={14} /> {week.compliance}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ÁREA 4: ÁGUA */}
-        <div className="area-agua">
-           <HydrationWidget currentAmount={waterLog[dateKey] || 0} onAdd={handleAddWater} />
-        </div>
-
       </div>
 
+      {/* MODAIS */}
       <AddFoodModal isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleAddFood} mealName={currentMealName} />
+      
+      <DietPlanModal isOpen={isPlanModalOpen} onClose={() => setIsPlanModalOpen(false)} />
     </div>
   );
 }
