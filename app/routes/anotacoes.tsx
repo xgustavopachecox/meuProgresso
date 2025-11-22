@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './anotacoes.css';
 import { 
-  LuStickyNote, LuCheck, LuPlus, LuTrash2, LuSearch, LuX
+  LuStickyNote, LuCheck, LuPlus, LuTrash2, LuX, LuPalette
 } from 'react-icons/lu';
 
 // --- TIPOS ---
@@ -9,7 +9,7 @@ interface Note {
   id: number;
   title: string;
   content: string;
-  color: string; // Para dar uma corzinha no card
+  color: string; // 'blue', 'yellow', 'green', 'purple', 'gray'
   date: string;
 }
 
@@ -31,35 +31,49 @@ const INITIAL_TASKS: GeneralTask[] = [
   { id: 3, text: 'Marcar dentista', done: false },
 ];
 
-export default function AnotacoesPage() {
-  // Estado da Aba Ativa ('notes' ou 'tasks')
-  const [activeTab, setActiveTab] = useState<'notes' | 'tasks'>('notes');
+// Cores disponíveis para as notas
+const NOTE_COLORS = [
+  { id: 'gray', value: '#27272a' },   // Padrão
+  { id: 'blue', value: '#1e3a8a' },   // Azul
+  { id: 'yellow', value: '#854d0e' }, // Amarelo/Laranja (Dark)
+  { id: 'green', value: '#14532d' },  // Verde
+  { id: 'purple', value: '#581c87' }, // Roxo
+];
 
-  // Estados de Dados
+export default function AnotacoesPage() {
+  const [activeTab, setActiveTab] = useState<'notes' | 'tasks'>('notes');
   const [notes, setNotes] = useState(INITIAL_NOTES);
   const [tasks, setTasks] = useState(INITIAL_TASKS);
 
-  // Estados de Formulário (Notas)
+  // Estados do Modal de Notas
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
   const [newNoteTitle, setNewNoteTitle] = useState('');
   const [newNoteContent, setNewNoteContent] = useState('');
+  const [selectedColor, setSelectedColor] = useState('gray'); // Cor padrão
 
-  // Estados de Formulário (Tarefas)
+  // Estados de Tarefas
   const [newTaskText, setNewTaskText] = useState('');
 
   // --- FUNÇÕES DE NOTAS ---
+  const openNoteModal = () => {
+    setNewNoteTitle('');
+    setNewNoteContent('');
+    setSelectedColor('gray');
+    setIsNoteModalOpen(true);
+  };
+
   const handleAddNote = () => {
     if (!newNoteTitle && !newNoteContent) return;
+    
     const newNote: Note = {
       id: Date.now(),
       title: newNoteTitle || 'Sem título',
       content: newNoteContent,
-      color: 'gray', // Padrão
+      color: selectedColor,
       date: new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
     };
+    
     setNotes([newNote, ...notes]);
-    setNewNoteTitle('');
-    setNewNoteContent('');
     setIsNoteModalOpen(false);
   };
 
@@ -116,9 +130,11 @@ export default function AnotacoesPage() {
         <div className="notes-section">
           
           {/* Botão de Criar Nota Rápida */}
-          <div className="create-note-bar" onClick={() => setIsNoteModalOpen(true)}>
-            <LuPlus size={24} />
-            <span>Criar nova nota...</span>
+          <div className="create-note-bar" onClick={openNoteModal}>
+            <div className="placeholder-text">
+              <LuPlus size={24} />
+              <span>Criar nova nota...</span>
+            </div>
           </div>
 
           <div className="notes-grid">
@@ -159,7 +175,6 @@ export default function AnotacoesPage() {
                 <div className="task-left" onClick={() => toggleTask(task.id)}>
                   <div className="checkbox-custom">
                     {task.done && <LuX size={14} style={{color: '#000'}} />} 
-                    {/* Usando X ou Check visualmente */}
                   </div>
                   <span>{task.text}</span>
                 </div>
@@ -173,33 +188,62 @@ export default function AnotacoesPage() {
         </div>
       )}
 
-      {/* --- MODAL DE CRIAR NOTA --- */}
+      {/* --- MODAL DE CRIAR NOTA (REFEITO) --- */}
       {isNoteModalOpen && (
         <div className="modal-overlay" onClick={() => setIsNoteModalOpen(false)}>
           <div className="modal-content note-modal" onClick={e => e.stopPropagation()}>
+            
             <header className="modal-header">
               <h2>Nova Anotação</h2>
               <button className="close-button" onClick={() => setIsNoteModalOpen(false)}>×</button>
             </header>
+            
             <div className="modal-body">
-              <input 
-                type="text" 
-                placeholder="Título" 
-                className="note-title-input"
-                value={newNoteTitle}
-                onChange={e => setNewNoteTitle(e.target.value)}
-                autoFocus
-              />
-              <textarea 
-                placeholder="Escreva aqui..." 
-                className="note-content-input"
-                value={newNoteContent}
-                onChange={e => setNewNoteContent(e.target.value)}
-              />
+              <div className="note-form">
+                <div className="form-group">
+                  <label>Título</label>
+                  <input 
+                    type="text" 
+                    placeholder="Sobre o que é essa nota?" 
+                    value={newNoteTitle}
+                    onChange={e => setNewNoteTitle(e.target.value)}
+                    autoFocus
+                    className="input-styled"
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label>Conteúdo</label>
+                  <textarea 
+                    placeholder="Escreva suas ideias..." 
+                    value={newNoteContent}
+                    onChange={e => setNewNoteContent(e.target.value)}
+                    className="textarea-styled"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="label-color"><LuPalette size={16}/> Cor do Cartão</label>
+                  <div className="color-selector">
+                    {NOTE_COLORS.map(c => (
+                      <div 
+                        key={c.id}
+                        className={`color-circle ${selectedColor === c.id ? 'selected' : ''}`}
+                        style={{ backgroundColor: c.value }}
+                        onClick={() => setSelectedColor(c.id)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="modal-footer">
-              <button className="btn-primary" onClick={handleAddNote}>Salvar Nota</button>
-            </div>
+
+            <footer className="modal-footer">
+              <button className="btn-primary" onClick={handleAddNote}>
+                Salvar Nota
+              </button>
+            </footer>
+
           </div>
         </div>
       )}
